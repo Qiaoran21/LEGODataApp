@@ -37,33 +37,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun BottomNavBar(navController: NavController) {
-    val navItems = listOf(NavItem.Home, NavItem.WishList, NavItem.MyLEGO)
-    var selectedItem by rememberSaveable { mutableStateOf(0) }
-
-    NavigationBar {
-        navItems.forEachIndexed{index, item ->
-            NavigationBarItem(
-                selected = selectedItem == index,
-                label = { Text(item.title) },
-                icon = { Icon(item.icon, contentDescription = item.title) },
-                onClick = { navController.navigate(item.route) {
-                    popUpTo((NavItem.MyLEGO.route))
-                } })
-        }
-    }
-}
-
-@Composable
-fun NavigationScreens(navController: NavHostController) {
-    NavHost(navController, startDestination = NavItem.Home.route) {
-        composable(NavItem.WishList.route) { WishListScreen() }
-        composable(NavItem.MyLEGO.route) { MyLEGOScreen() }
-        composable(NavItem.Home.route) { HomeScreen() }
-    }
-}
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen(navController: NavHostController) {
