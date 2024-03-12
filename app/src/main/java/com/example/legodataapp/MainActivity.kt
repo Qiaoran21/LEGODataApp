@@ -51,76 +51,19 @@ class MainActivity : ComponentActivity() {
         setContent {
             LEGODataAppTheme {
                 val navController = rememberNavController()
+                val bottomBarColor = DarkYellow
+
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     MainScreen(
                         navController = navController,
-                        modifier = Modifier.background(color = Color.Cyan)
+                        modifier = Modifier,
+                        bottomBarColor = bottomBarColor
                     )
                 }
             }
         }
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Composable
-fun MainScreen(navController: NavHostController, modifier: Modifier) {
-    val currentRoute = getCurrentRoute(navController)
-    val pageTitle = when (currentRoute) {
-        NavItem.Home.route -> NavItem.Home.title
-        NavItem.WishList.route -> NavItem.WishList.title
-        NavItem.MyLEGO.route -> NavItem.MyLEGO.title
-        else -> "Error!"
-    }
-
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = {
-                    Text(
-                        pageTitle,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Rounded.ArrowBackIosNew,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Rounded.Menu,
-                            contentDescription = "Menu"
-                        )
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            BottomAppBar(
-                modifier = modifier
-            ) {
-                BottomNavBar(
-                    navController = navController,
-                    modifier = modifier
-                )
-            }
-        }
-    ) {
-        NavigationScreens(navController = navController)
-    }
-}
-

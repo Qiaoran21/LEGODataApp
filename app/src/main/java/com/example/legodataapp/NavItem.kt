@@ -10,28 +10,33 @@ import androidx.compose.material.icons.rounded.Star
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.sp
+import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.DarkYellow
 
 sealed class NavItem(
     val route: String,
     val title: String,
-    val icon: ImageVector
-){
-    object Home: NavItem(
+    val icon: ImageVector,
+    val titleColor: Color
+) {
+    object Home : NavItem(
         route = "Home",
         title = "HOME",
-        icon = Icons.Rounded.Home
+        icon = Icons.Rounded.Home,
+        titleColor = Brown
     )
 
-    object WishList: NavItem(
+    object WishList : NavItem(
         route = "Wish List",
         title = "WISH LIST",
-        icon = Icons.Rounded.Savings
+        icon = Icons.Rounded.Savings,
+        titleColor = Brown
     )
 
-    object MyLEGO: NavItem(
+    object MyLEGO : NavItem(
         route = "My LEGO",
         title = "MY LEGO",
-        icon = Icons.Default.Star
+        icon = Icons.Default.Star,
+        titleColor = Brown
     )
 }

@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Theme.SplashScreen" parent="Theme.LEGODataApp">
-        <item name="windowSplashScreenBackground">@color/cream</item>
+        <item name= "android:windowBackground">@color/cream</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/logo</item>
         <item name="postSplashScreenTheme">@style/Theme.LEGODataApp</item>
     </style>

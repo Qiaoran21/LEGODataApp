@@ -21,17 +21,21 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.legodataapp.ui.theme.Cream
 
 @Composable
-fun BottomNavBar(navController: NavController, modifier: Modifier) {
+fun BottomNavBar(
+        navController: NavController,
+        modifier: Modifier,
+        bottomBarColor: Color
+) {
     val navItems = listOf(NavItem.Home, NavItem.WishList, NavItem.MyLEGO)
     var selectedItem by rememberSaveable { mutableStateOf(0) }
 
-    NavigationBar(modifier = modifier) {
+    NavigationBar(modifier = modifier.background(bottomBarColor)) {
         navItems.forEachIndexed { index, item ->
             NavigationBarItem(
                 selected = selectedItem == index,
-                label = { Text(item.title) },
+                label = { Text(item.title, color = item.titleColor) },
                 icon = { Icon(item.icon, contentDescription = item.title) },
-                onClick = { navController.navigate(item.route) }
+                onClick = { navController.navigate(item.route) },
             )
         }
     }
