@@ -9,8 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Yellow
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.example.legodataapp.ui.theme.Cream
+import com.example.legodataapp.ui.theme.DarkYellow
+import com.example.legodataapp.ui.theme.Pink40
 
 @Composable
 fun HomeScreen() {
@@ -19,12 +24,13 @@ fun HomeScreen() {
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Cream)
     ) {
         Text(
             text = "Home ",
-            color = Color.Green,
-            fontSize = 50.sp
+            color = DarkYellow,
+            fontSize = 50.sp,
+            fontFamily = FontFamily.Monospace
         )
     }
 }

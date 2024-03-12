@@ -25,9 +25,8 @@ fun BottomNavBar(navController: NavController) {
                 selected = selectedItem == index,
                 label = { Text(item.title) },
                 icon = { Icon(item.icon, contentDescription = item.title) },
-                onClick = { navController.navigate(item.route) {
-                    popUpTo((NavItem.MyLEGO.route))
-                } })
+                onClick = { navController.navigate(item.route) }
+            )
         }
     }
 }
