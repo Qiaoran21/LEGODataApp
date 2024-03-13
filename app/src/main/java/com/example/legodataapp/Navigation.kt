@@ -5,6 +5,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,24 +19,26 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.Cream
+import com.example.legodataapp.ui.theme.DarkYellow
+import com.example.legodataapp.ui.theme.Pink40
 
 @Composable
-fun BottomNavBar(
-        navController: NavController,
-        modifier: Modifier,
-        bottomBarColor: Color
-) {
+fun BottomNavBar(navController: NavController, modifier: Modifier) {
     val navItems = listOf(NavItem.Home, NavItem.WishList, NavItem.MyLEGO)
     var selectedItem by rememberSaveable { mutableStateOf(0) }
 
-    NavigationBar(modifier = modifier.background(bottomBarColor)) {
+    NavigationBar(containerColor = DarkYellow) {
         navItems.forEachIndexed { index, item ->
             NavigationBarItem(
-                selected = selectedItem == index,
+                selected = false,
                 label = { Text(item.title, color = item.titleColor) },
                 icon = { Icon(item.icon, contentDescription = item.title) },
                 onClick = { navController.navigate(item.route) },
+                colors = NavigationBarItemDefaults.colors(
+                    unselectedIconColor = Brown
+                )
             )
         }
     }

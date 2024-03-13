@@ -51,17 +51,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             LEGODataAppTheme {
                 val navController = rememberNavController()
-                val bottomBarColor = DarkYellow
 
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    MainScreen(
-                        navController = navController,
-                        modifier = Modifier,
-                        bottomBarColor = bottomBarColor
-                    )
+                    MainScreen(navController = navController, modifier = Modifier)
                 }
             }
         }
