@@ -14,6 +14,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -33,7 +35,7 @@ fun BottomNavBar(navController: NavController, modifier: Modifier) {
         navItems.forEachIndexed { index, item ->
             NavigationBarItem(
                 selected = false,
-                label = { Text(item.title, color = item.titleColor) },
+                label = { Text(item.title, color = item.titleColor, fontSize = 15.sp) },
                 icon = { Icon(item.icon, contentDescription = item.title) },
                 onClick = { navController.navigate(item.route) },
                 colors = NavigationBarItemDefaults.colors(
