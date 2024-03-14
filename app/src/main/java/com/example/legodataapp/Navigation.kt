@@ -50,6 +50,7 @@ fun NavigationScreens(navController: NavHostController) {
         composable(NavItem.WishList.route) { WishListScreen() }
         composable(NavItem.MyLEGO.route) { MyLEGOScreen() }
         composable(NavItem.Home.route) { HomeScreen() }
+        composable(NavItem.Help.route) { HelpScreen() }
     }
 }
 
