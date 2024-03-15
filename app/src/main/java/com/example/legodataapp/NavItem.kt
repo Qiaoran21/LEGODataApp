@@ -1,30 +1,24 @@
 package com.example.legodataapp
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Savings
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.sp
 import com.example.legodataapp.ui.theme.Brown
-import com.example.legodataapp.ui.theme.DarkYellow
+import com.example.movieapp.R
 
 sealed class NavItem(
     val route: String,
     val title: String,
-    val icon: ImageVector,
+    val icon: Int,
     val titleColor: Color,
     val contentDescription: String
 ) {
     object Home : NavItem(
         route = "Home",
         title = "HOME",
-        icon = Icons.Rounded.Home,
+        icon = R.drawable.home_icon,
         titleColor = Brown,
         contentDescription = "Home"
     )
@@ -32,7 +26,7 @@ sealed class NavItem(
     object WishList : NavItem(
         route = "Wish List",
         title = "WISH LIST",
-        icon = Icons.Rounded.Savings,
+        icon = R.drawable.heart_icon,
         titleColor = Brown,
         contentDescription = "Wish List"
     )
@@ -40,7 +34,7 @@ sealed class NavItem(
     object MyLEGO : NavItem(
         route = "My LEGO",
         title = "MY LEGO",
-        icon = Icons.Default.Star,
+        icon = R.drawable.favoritefolder_icon,
         titleColor = Brown,
         contentDescription = "My LEGO"
     )
@@ -48,7 +42,7 @@ sealed class NavItem(
     object Help : NavItem(
         route = "Help",
         title = "HELP",
-        icon = Icons.Default.QuestionMark,
+        icon = R.drawable.help_icon,
         titleColor = Brown,
         contentDescription = "Help"
     )

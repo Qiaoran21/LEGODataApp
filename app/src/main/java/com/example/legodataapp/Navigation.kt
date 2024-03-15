@@ -14,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -25,6 +26,7 @@ import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.Cream
 import com.example.legodataapp.ui.theme.DarkYellow
 import com.example.legodataapp.ui.theme.Pink40
+import com.example.legodataapp.ui.theme.fontFamily
 
 @Composable
 fun BottomNavBar(navController: NavController, modifier: Modifier) {
@@ -35,8 +37,12 @@ fun BottomNavBar(navController: NavController, modifier: Modifier) {
         navItems.forEachIndexed { index, item ->
             NavigationBarItem(
                 selected = false,
-                label = { Text(item.title, color = item.titleColor, fontSize = 15.sp) },
-                icon = { Icon(item.icon, contentDescription = item.title) },
+//                label = { Text(
+//                    item.title,
+//                    color = item.titleColor,
+//                    fontSize = 10.sp,
+//                    fontFamily = fontFamily) },
+                icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },
                 onClick = { navController.navigate(item.route) },
                 colors = NavigationBarItemDefaults.colors(
                     unselectedIconColor = Brown

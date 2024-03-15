@@ -14,10 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.legodataapp.ui.theme.Brown
+import com.example.legodataapp.ui.theme.fontFamily
 
 @Composable
 fun DrawerHeader() {
@@ -46,7 +48,11 @@ fun DrawerBody(
                     }
                     .padding(25.dp)
             ) {
-                Icon(imageVector = item.icon, contentDescription = item.contentDescription, tint = Brown)
+                Icon(
+                    painter = painterResource(id = item.icon),
+                    contentDescription = item.contentDescription,
+                    tint = Brown
+                )
                 Spacer(modifier = Modifier.width(15.dp))
                 Text(text = item.title, color = Brown, fontSize = 20.sp)
             }

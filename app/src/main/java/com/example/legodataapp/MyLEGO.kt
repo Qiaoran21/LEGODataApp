@@ -24,11 +24,9 @@ fun MyLEGOScreen() {
             .fillMaxSize()
             .background(Cream)
     ) {
-        Text(
-            text = "My LEGO ",
-            color = DarkYellow,
-            fontSize = 50.sp,
-            fontFamily = FontFamily.Monospace
-        )
+        Product()
+        Product()
+        Product()
+        Product()
     }
 }

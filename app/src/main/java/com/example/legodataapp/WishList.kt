@@ -24,11 +24,9 @@ fun WishListScreen() {
             .fillMaxSize()
             .background(Cream)
     ) {
-        Text(
-            text = "Wish List ",
-            color = DarkYellow,
-            fontSize = 50.sp,
-            fontFamily = FontFamily.Monospace
-        )
+        Product()
+        Product()
+        Product()
+        Product()
     }
 }
