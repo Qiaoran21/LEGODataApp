@@ -1,9 +1,5 @@
 package com.example.legodataapp
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.rounded.Savings
 import androidx.compose.ui.graphics.Color
 import com.example.legodataapp.ui.theme.Brown
 import com.example.movieapp.R
@@ -45,5 +41,21 @@ sealed class NavItem(
         icon = R.drawable.help_icon,
         titleColor = Brown,
         contentDescription = "Help"
+    )
+
+    object Product : NavItem(
+        route = "Product",
+        title = "PRODUCT",
+        icon = R.drawable.help_icon,
+        titleColor = Brown,
+        contentDescription = "Product"
+    )
+
+    object Rating : NavItem(
+        route = "Rating",
+        title = "RATING",
+        icon = R.drawable.help_icon,
+        titleColor = Brown,
+        contentDescription = "Rating"
     )
 }

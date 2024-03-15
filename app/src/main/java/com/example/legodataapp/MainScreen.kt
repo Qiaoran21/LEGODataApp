@@ -25,6 +25,7 @@ import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.DarkYellow
 import kotlinx.coroutines.launch
 import androidx.compose.material.rememberDrawerState
+import androidx.compose.ui.text.font.FontWeight
 import com.example.legodataapp.ui.theme.fontFamily
 
 
@@ -38,6 +39,8 @@ fun MainScreen(navController: NavHostController, modifier: Modifier) {
         NavItem.WishList.route -> NavItem.WishList.title
         NavItem.MyLEGO.route -> NavItem.MyLEGO.title
         NavItem.Help.route -> NavItem.Help.title
+        NavItem.Product.route -> NavItem.Product.title
+        NavItem.Rating.route -> NavItem.Rating.title
         else -> "Error!"
     }
 
@@ -56,7 +59,8 @@ fun MainScreen(navController: NavHostController, modifier: Modifier) {
                         pageTitle,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        fontFamily = fontFamily
+                        fontFamily = fontFamily,
+                        fontWeight = FontWeight.Bold
                     )
                 },
                 navigationIcon = {

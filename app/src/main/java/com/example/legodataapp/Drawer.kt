@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.legodataapp.ui.theme.Brown
@@ -54,7 +54,13 @@ fun DrawerBody(
                     tint = Brown
                 )
                 Spacer(modifier = Modifier.width(15.dp))
-                Text(text = item.title, color = Brown, fontSize = 20.sp)
+                Text(
+                    text = item.title,
+                    color = Brown,
+                    fontSize = 20.sp,
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
