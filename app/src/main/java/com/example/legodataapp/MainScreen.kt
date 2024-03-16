@@ -38,6 +38,7 @@ fun MainScreen(navController: NavHostController, modifier: Modifier) {
         NavItem.Home.route -> NavItem.Home.title
         NavItem.WishList.route -> NavItem.WishList.title
         NavItem.MyLEGO.route -> NavItem.MyLEGO.title
+        NavItem.Account.route -> NavItem.Account.title
         NavItem.Help.route -> NavItem.Help.title
         NavItem.Product.route -> NavItem.Product.title
         NavItem.Rating.route -> NavItem.Rating.title
@@ -109,6 +110,7 @@ fun MainScreen(navController: NavHostController, modifier: Modifier) {
                             NavItem.Home,
                             NavItem.WishList,
                             NavItem.MyLEGO,
+                            NavItem.Account,
                             NavItem.Help
                         ),
                         modifier = Modifier.fillMaxSize()

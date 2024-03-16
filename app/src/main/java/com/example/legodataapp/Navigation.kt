@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.legodataapp.screens.AccountScreen
 import com.example.legodataapp.screens.HelpScreen
 import com.example.legodataapp.screens.HomeScreen
 import com.example.legodataapp.screens.MyLEGOScreen
@@ -24,7 +25,7 @@ import com.example.legodataapp.ui.theme.DarkYellow
 
 @Composable
 fun BottomNavBar(navController: NavController, modifier: Modifier) {
-    val navItems = listOf(NavItem.Home, NavItem.WishList, NavItem.MyLEGO)
+    val navItems = listOf(NavItem.Home, NavItem.WishList, NavItem.MyLEGO, NavItem.Account)
 
     NavigationBar(containerColor = DarkYellow) {
         navItems.forEachIndexed { index, item ->
@@ -46,6 +47,7 @@ fun NavigationScreens(navController: NavHostController) {
         composable(NavItem.WishList.route) { WishListScreen(navController = navController, hasRating = true) }
         composable(NavItem.MyLEGO.route) { MyLEGOScreen(navController = navController, hasRating = false) }
         composable(NavItem.Home.route) { HomeScreen() }
+        composable(NavItem.Account.route) { AccountScreen(navController = navController) }
         composable(NavItem.Help.route) { HelpScreen() }
         composable(NavItem.Product.route) { ProductScreen() }
         composable(NavItem.Rating.route) { RatingScreen() }

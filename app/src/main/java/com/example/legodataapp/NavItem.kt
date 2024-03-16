@@ -35,6 +35,14 @@ sealed class NavItem(
         contentDescription = "My LEGO"
     )
 
+    object Account : NavItem(
+        route = "Account",
+        title = "ACCOUNT",
+        icon = R.drawable.user_icon,
+        titleColor = Brown,
+        contentDescription = "Account"
+    )
+
     object Help : NavItem(
         route = "Help",
         title = "HELP",
