@@ -43,7 +43,7 @@ import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.Cream
 import com.example.legodataapp.ui.theme.DarkYellow
 import com.example.legodataapp.ui.theme.fontFamily
-import com.example.movieapp.R
+import com.example.legodataapp.R
 
 @Composable
 fun RatingScreen() {

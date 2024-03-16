@@ -2,7 +2,7 @@ package com.example.legodataapp
 
 import androidx.compose.ui.graphics.Color
 import com.example.legodataapp.ui.theme.Brown
-import com.example.movieapp.R
+import com.example.legodataapp.R
 
 sealed class NavItem(
     val route: String,

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.movieapp"
+    namespace = "com.example.legodataapp"
     compileSdk = 34
 
     defaultConfig {
@@ -13,6 +13,9 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        manifestPlaceholders["auth0Domain"] = "@string/com_auth0_domain"
+        manifestPlaceholders["auth0Scheme"] = "@string/com_auth0_scheme"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -75,4 +78,10 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.6.2")
 
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.1")
+
+    implementation("com.auth0.android:auth0:2.+")
+    implementation("com.auth0.android:jwtdecode:2.+")
+    implementation("androidx.appcompat:appcompat:1.4.2")
+    implementation("com.google.android.material:material:1.6.1")
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.1")
 }
