@@ -1,6 +1,7 @@
 package com.example.legodataapp
 
 import android.annotation.SuppressLint
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,13 +27,14 @@ import com.example.legodataapp.ui.theme.DarkYellow
 import kotlinx.coroutines.launch
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.ui.text.font.FontWeight
+import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.ui.theme.fontFamily
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen(navController: NavHostController, modifier: Modifier) {
+fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: AuthViewModel) {
     val currentRoute = getCurrentRoute(navController)
     val pageTitle = when (currentRoute) {
         NavItem.Home.route -> NavItem.Home.title
@@ -123,7 +125,7 @@ fun MainScreen(navController: NavHostController, modifier: Modifier) {
                 }
             }
         ) {
-            NavigationScreens(navController = navController)
+            NavigationScreens(navController = navController, viewModel)
         }
     }
 }
