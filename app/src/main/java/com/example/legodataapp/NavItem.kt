@@ -38,7 +38,7 @@ sealed class NavItem(
     object Account : NavItem(
         route = "Account",
         title = "ACCOUNT",
-        icon = R.drawable.user_icon,
+        icon = R.drawable.user_icon2,
         titleColor = Brown,
         contentDescription = "Account"
     )
