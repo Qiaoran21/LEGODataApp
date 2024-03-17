@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
@@ -27,6 +29,7 @@ import com.example.legodataapp.ui.theme.DarkYellow
 import kotlinx.coroutines.launch
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.ui.theme.fontFamily
 
@@ -106,7 +109,8 @@ fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: 
                 Column(
                     modifier = Modifier.background(DarkYellow)
                 ) {
-                    DrawerHeader()
+                    DrawerHeader(viewModel = viewModel)
+                    Spacer(modifier = Modifier.padding(10.dp))
                     DrawerBody(
                         items = listOf(
                             NavItem.Home,

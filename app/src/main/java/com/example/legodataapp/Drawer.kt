@@ -18,17 +18,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.fontFamily
 
 @Composable
-fun DrawerHeader() {
+fun DrawerHeader(viewModel: AuthViewModel) {
     Box(
         modifier = Modifier
-            .padding(vertical = 60.dp),
-        contentAlignment = Alignment.BottomCenter
+            .padding(top = 100.dp)
     ) {
-        Text(text = "", color = Brown)
+        Text(
+            text = if (viewModel.userIsAuthenticated) "Welcome back, " +
+                    "${viewModel.user.name}!"
+                    else "",
+            color = Brown,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            modifier = Modifier.padding(start = 30.dp)
+        )
     }
 }
 
