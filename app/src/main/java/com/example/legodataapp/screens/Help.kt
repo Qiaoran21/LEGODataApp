@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.sp
 import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.Cream
 import com.example.legodataapp.ui.theme.DarkYellow
+import com.example.legodataapp.ui.theme.LightBrown
 
 @Composable
 fun HelpScreen() {
@@ -26,7 +27,7 @@ fun HelpScreen() {
     ) {
         Text(
             text = "Contact Us",
-            color = DarkYellow,
+            color = LightBrown,
             fontSize = 50.sp
         )
         Spacer(modifier = Modifier.padding(20.dp))

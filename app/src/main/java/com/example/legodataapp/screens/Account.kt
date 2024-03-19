@@ -28,6 +28,7 @@ import com.example.legodataapp.model.User
 import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.Cream
 import com.example.legodataapp.ui.theme.DarkYellow
+import com.example.legodataapp.ui.theme.LightBrown
 import com.example.legodataapp.ui.theme.fontFamily
 
 @Composable
@@ -45,7 +46,7 @@ fun AccountScreen(navController: NavController, viewModel: AuthViewModel) {
     ) {
         Text(
             text = "Account",
-            color = DarkYellow,
+            color = LightBrown,
             fontSize = 50.sp
         )
         Spacer(modifier = Modifier.padding(20.dp))
@@ -77,12 +78,13 @@ fun AccountScreen(navController: NavController, viewModel: AuthViewModel) {
                 text = buttonText,
                 fontSize = 15.sp,
                 fontFamily = fontFamily,
-                fontWeight = FontWeight.Bold)
+                fontWeight = FontWeight.Bold,
+                color = Brown)
         }
         Spacer(modifier = Modifier.padding(10.dp))
         Text(
             text = "Other Settings",
-            color = DarkYellow,
+            color = Brown,
             fontSize = 30.sp
         )
     }

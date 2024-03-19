@@ -22,6 +22,7 @@ import com.example.legodataapp.ui.theme.Cream
 import com.example.legodataapp.ui.theme.DarkYellow
 import com.example.legodataapp.ui.theme.fontFamily
 import com.example.legodataapp.R
+import com.example.legodataapp.ui.theme.LightBrown
 
 @Composable
 fun HomeScreen() {
@@ -37,10 +38,9 @@ fun HomeScreen() {
         )
         Text(
             text = "Themes",
-            color = DarkYellow,
+            color = LightBrown,
             fontSize = 40.sp,
-            fontFamily = fontFamily,
-            fontWeight = FontWeight.Bold
+            fontFamily = fontFamily
         )
         Row {
             legoTheme()
