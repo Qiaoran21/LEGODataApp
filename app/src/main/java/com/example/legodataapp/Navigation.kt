@@ -7,6 +7,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -25,10 +26,10 @@ import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.DarkYellow
 
 @Composable
-fun BottomNavBar(navController: NavController, modifier: Modifier) {
+fun BottomNavBar(navController: NavController, modifier: Modifier, containerColor: Color) {
     val navItems = listOf(NavItem.Home, NavItem.WishList, NavItem.MyLEGO, NavItem.Account)
 
-    NavigationBar(containerColor = DarkYellow) {
+    NavigationBar(containerColor = containerColor) {
         navItems.forEachIndexed { index, item ->
             NavigationBarItem(
                 selected = false,

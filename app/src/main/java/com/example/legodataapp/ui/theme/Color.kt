@@ -15,4 +15,5 @@ val DarkYellow = Color(0xFFEBA937)
 val Brown = Color(0xff5b4f47)
 val LightBrown = Color(0xffc07a02)
 
+val DarkerYellow = Color(0xFF7D5612)
 

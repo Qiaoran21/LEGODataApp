@@ -28,9 +28,11 @@ import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.DarkYellow
 import kotlinx.coroutines.launch
 import androidx.compose.material.rememberDrawerState
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.legodataapp.model.AuthViewModel
+import com.example.legodataapp.ui.theme.DarkerYellow
 import com.example.legodataapp.ui.theme.fontFamily
 
 
@@ -53,11 +55,18 @@ fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: 
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = androidx.compose.material.DrawerValue.Closed)
 
+    val loadSettings = LoadSettings()
+    val isDarkMode = loadSettings.loadDarkModeState(LocalContext.current)
+    val containerColor = if (isDarkMode){
+        DarkerYellow
+    }else{
+        DarkYellow
+    }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DarkYellow,
+                    containerColor = containerColor,
                     titleContentColor = Brown,
                 ),
                 title = {
@@ -95,10 +104,11 @@ fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: 
             )
         },
         bottomBar = {
-            BottomAppBar(containerColor = DarkYellow) {
+            BottomAppBar(containerColor = containerColor) {
                 BottomNavBar(
                     navController = navController,
-                    modifier = modifier
+                    modifier = modifier,
+                    containerColor = containerColor
                 )
             }
         }
@@ -107,7 +117,7 @@ fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: 
             drawerState = drawerState,
             drawerContent = {
                 Column(
-                    modifier = Modifier.background(DarkYellow)
+                    modifier = Modifier.background(containerColor)
                 ) {
                     DrawerHeader(viewModel = viewModel)
                     Spacer(modifier = Modifier.padding(10.dp))

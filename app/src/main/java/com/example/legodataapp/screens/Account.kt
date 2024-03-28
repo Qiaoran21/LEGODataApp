@@ -42,6 +42,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.legodataapp.LoadSettings
 
 @Composable
 fun AccountScreen(navController: NavController, viewModel: AuthViewModel) {
