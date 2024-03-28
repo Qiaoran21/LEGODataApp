@@ -30,6 +30,7 @@ import com.example.legodataapp.ui.theme.DarkYellow
 import com.example.legodataapp.ui.theme.fontFamily
 import com.example.legodataapp.R
 import com.example.legodataapp.data.AllSet
+import com.example.legodataapp.data.Set
 import com.example.legodataapp.model.SetViewModel
 import com.example.legodataapp.ui.theme.LightBrown
 
@@ -40,60 +41,58 @@ fun HomeScreen(setViewModel: SetViewModel) {
     LaunchedEffect(Unit) {
         setViewModel.fetchSets()
     }
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(Cream)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.city),
-            contentDescription = "LEGO city",
-            modifier = Modifier.size(420.dp)
+        item {
+            Image(
+                painter = painterResource(id = R.drawable.city),
+                contentDescription = "LEGO city",
+                modifier = Modifier.size(420.dp)
             )
-        Text(
-            text = "Browse",
-            color = LightBrown,
-            fontSize = 30.sp,
-            fontFamily = fontFamily
-        )
-        SetItem(sets)
+            Text(
+                text = "Browse",
+                color = LightBrown,
+                fontSize = 30.sp,
+                fontFamily = fontFamily
+            )
+        }
+        items(sets?.setList ?: emptyList()) { set ->
+            SetCard(set)
+        }
     }
 }
 
 @Composable
-fun SetItem(sets: AllSet?) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(sets?.setList ?: emptyList()) { set ->
-            Card (
-                modifier = Modifier.padding(20.dp),
-                border = BorderStroke(2.dp, DarkYellow),
-                colors = CardDefaults.cardColors(containerColor = Cream)
-            ) {
-                Column(modifier = Modifier.padding(30.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally) {
-                    AsyncImage(
-                        model = set.set_img_url,
-                        contentDescription = set.name,
-                        modifier = Modifier.size(200.dp),
-                        alignment = Alignment.Center
-                    )
-                    Text(text = set.name,
-                        color = Brown,
-                        fontSize = 20.sp,
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.padding(5.dp))
-                    Text("Pieces: ${set.num_parts}")
-                    Text("Set Number: ${set.set_num}")
+fun SetCard(set: Set) {
+        Card (
+            modifier = Modifier.padding(20.dp),
+            border = BorderStroke(2.dp, DarkYellow),
+            colors = CardDefaults.cardColors(containerColor = Cream)
+        ) {
+            Column(modifier = Modifier.padding(30.dp),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                AsyncImage(
+                    model = set.set_img_url,
+                    contentDescription = set.name,
+                    modifier = Modifier.size(200.dp),
+                    alignment = Alignment.Center
+                )
+                Text(text = set.name,
+                    color = Brown,
+                    fontSize = 20.sp,
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.padding(5.dp))
+                Text("Pieces: ${set.num_parts}")
+                Text("Set Number: ${set.set_num}")
 //                    Text("Theme: ${set.theme_id}")
 //                    Text("Year: ${set.year}")
-                }
             }
         }
     }
-}
 
 //@Composable
 //fun legoTheme() {
