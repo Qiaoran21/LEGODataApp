@@ -31,13 +31,19 @@ import androidx.compose.material.rememberDrawerState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.legodataapp.model.AuthViewModel
+import com.example.legodataapp.model.SetViewModel
 import com.example.legodataapp.ui.theme.fontFamily
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: AuthViewModel) {
+fun MainScreen(
+    navController: NavHostController,
+    modifier: Modifier,
+    viewModel: AuthViewModel,
+    setViewModel: SetViewModel
+) {
     val currentRoute = getCurrentRoute(navController)
     val pageTitle = when (currentRoute) {
         NavItem.Home.route -> NavItem.Home.title
@@ -51,7 +57,9 @@ fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: 
     }
 
     val scope = rememberCoroutineScope()
-    val drawerState = rememberDrawerState(initialValue = androidx.compose.material.DrawerValue.Closed)
+    val drawerState = rememberDrawerState(
+        initialValue = androidx.compose.material.DrawerValue.Closed
+    )
 
     Scaffold(
         topBar = {
@@ -129,7 +137,7 @@ fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: 
                 }
             }
         ) {
-            NavigationScreens(navController = navController, viewModel)
+            NavigationScreens(navController = navController, viewModel, setViewModel)
         }
     }
 }

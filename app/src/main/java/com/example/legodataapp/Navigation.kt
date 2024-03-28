@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.legodataapp.model.AuthViewModel
+import com.example.legodataapp.model.SetViewModel
 import com.example.legodataapp.screens.AccountScreen
 import com.example.legodataapp.screens.HelpScreen
 import com.example.legodataapp.screens.HomeScreen
@@ -43,11 +44,11 @@ fun BottomNavBar(navController: NavController, modifier: Modifier) {
 }
 
 @Composable
-fun NavigationScreens(navController: NavHostController, viewModel: AuthViewModel) {
+fun NavigationScreens(navController: NavHostController, viewModel: AuthViewModel, setViewModel: SetViewModel) {
     NavHost(navController, startDestination = NavItem.Home.route) {
         composable(NavItem.WishList.route) { WishListScreen(navController = navController, hasRating = true) }
         composable(NavItem.MyLEGO.route) { MyLEGOScreen(navController = navController, hasRating = false) }
-        composable(NavItem.Home.route) { HomeScreen() }
+        composable(NavItem.Home.route) { HomeScreen(setViewModel = setViewModel) }
         composable(NavItem.Account.route) { AccountScreen(navController = navController, viewModel) }
         composable(NavItem.Help.route) { HelpScreen() }
         composable(NavItem.Product.route) { ProductScreen() }

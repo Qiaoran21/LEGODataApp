@@ -12,9 +12,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.ui.theme.LEGODataAppTheme
 import androidx.activity.viewModels
+import com.example.legodataapp.model.SetViewModel
 
 class MainActivity : ComponentActivity() {
     private val authViewModel: AuthViewModel by viewModels()
+    private val setViewModel: SetViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -26,7 +28,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    MainScreen(navController = navController, modifier = Modifier, authViewModel)
+                    MainScreen(
+                        navController = navController,
+                        modifier = Modifier,
+                        authViewModel,
+                        setViewModel
+                    )
                 }
             }
         }
