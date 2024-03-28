@@ -84,4 +84,6 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.4.2")
     implementation("com.google.android.material:material:1.6.1")
     implementation("androidx.compose.runtime:runtime-livedata:1.5.1")
+
+    implementation("androidx.preference:preference:1.1.0")
 }
