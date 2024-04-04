@@ -44,11 +44,15 @@ fun BottomNavBar(navController: NavController, modifier: Modifier) {
 }
 
 @Composable
-fun NavigationScreens(navController: NavHostController, viewModel: AuthViewModel, setViewModel: SetViewModel) {
+fun NavigationScreens(
+    navController: NavHostController,
+    viewModel: AuthViewModel,
+    setViewModel: SetViewModel
+) {
     NavHost(navController, startDestination = NavItem.Home.route) {
         composable(NavItem.WishList.route) { WishListScreen(navController = navController, hasRating = true) }
         composable(NavItem.MyLEGO.route) { MyLEGOScreen(navController = navController, hasRating = false) }
-        composable(NavItem.Home.route) { HomeScreen(setViewModel = setViewModel) }
+        composable(NavItem.Home.route) { HomeScreen(setViewModel = setViewModel, navController) }
         composable(NavItem.Account.route) { AccountScreen(navController = navController, viewModel) }
         composable(NavItem.Help.route) { HelpScreen() }
         composable(NavItem.Product.route) { ProductScreen() }

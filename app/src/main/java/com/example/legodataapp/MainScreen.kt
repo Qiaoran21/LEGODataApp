@@ -1,7 +1,6 @@
 package com.example.legodataapp
 
 import android.annotation.SuppressLint
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,6 +43,7 @@ fun MainScreen(
     setViewModel: SetViewModel
 ) {
     val currentRoute = getCurrentRoute(navController)
+
     val pageTitle = when (currentRoute) {
         NavItem.Home.route -> NavItem.Home.title
         NavItem.WishList.route -> NavItem.WishList.title
@@ -92,14 +91,14 @@ fun MainScreen(
                         )
                     }
                 },
-                actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Rounded.Search,
-                            contentDescription = "Search"
-                        )
-                    }
-                }
+//                actions = {
+//                    IconButton(onClick = { /* TODO */ }) {
+//                        Icon(
+//                            imageVector = Icons.Rounded.Search,
+//                            contentDescription = "Search"
+//                        )
+//                    }
+//                }
             )
         },
         bottomBar = {
@@ -141,3 +140,4 @@ fun MainScreen(
         }
     }
 }
+

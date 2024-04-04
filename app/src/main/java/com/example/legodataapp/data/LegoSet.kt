@@ -1,6 +1,6 @@
 package com.example.legodataapp.data
 
-data class Set(
+data class LegoSet(
     val last_modified_dt: String,
     val name: String,
     val num_parts: Int,
