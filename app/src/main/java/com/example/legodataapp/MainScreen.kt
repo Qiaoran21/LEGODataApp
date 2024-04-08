@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
@@ -28,18 +29,36 @@ import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.DarkYellow
 import kotlinx.coroutines.launch
 import androidx.compose.material.rememberDrawerState
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.ui.theme.DarkerYellow
 import com.example.legodataapp.ui.theme.fontFamily
+import android.media.MediaPlayer
+import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.colorResource
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: AuthViewModel) {
+fun MainScreen(
+    navController: NavHostController,
+    modifier: Modifier,
+    viewModel: AuthViewModel,
+    isDarkMode: Boolean
+) {
     val currentRoute = getCurrentRoute(navController)
     val pageTitle = when (currentRoute) {
         NavItem.Home.route -> NavItem.Home.title
@@ -52,21 +71,33 @@ fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: 
         else -> "Error!"
     }
 
+    val context = LocalContext.current
+    var mediaPlayer: MediaPlayer? = null
+    val loadSettings = LoadSettings()
+    val isSoundEffects = loadSettings.loadSoundEffectsState(context)
+    var legoSound by rememberSaveable { mutableIntStateOf(R.raw.lego_swoosh) }
+    var appJustStarted by rememberSaveable { mutableStateOf(true) }
+
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = androidx.compose.material.DrawerValue.Closed)
 
-    val loadSettings = LoadSettings()
-    val isDarkMode = loadSettings.loadDarkModeState(LocalContext.current)
-    val containerColor = if (isDarkMode){
-        DarkerYellow
-    }else{
-        DarkYellow
+    var containerColor by rememberSaveable { mutableStateOf(
+        if(isDarkMode){R.color.DarkerYellow}else{R.color.DarkYellow})
     }
+
+    LaunchedEffect(Unit){
+        appJustStarted = false
+    }
+
+    fun updateContainerColor(isDarkMode: Boolean) {
+        containerColor = if (isDarkMode) R.color.DarkerYellow else R.color.DarkYellow
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = containerColor,
+                    containerColor = colorResource(id = containerColor),
                     titleContentColor = Brown,
                 ),
                 title = {
@@ -104,11 +135,11 @@ fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: 
             )
         },
         bottomBar = {
-            BottomAppBar(containerColor = containerColor) {
+            BottomAppBar(containerColor = colorResource(id = containerColor)) {
                 BottomNavBar(
                     navController = navController,
                     modifier = modifier,
-                    containerColor = containerColor
+                    containerColor = colorResource(id = containerColor)
                 )
             }
         }
@@ -117,7 +148,7 @@ fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: 
             drawerState = drawerState,
             drawerContent = {
                 Column(
-                    modifier = Modifier.background(containerColor)
+                    modifier = Modifier.background(colorResource(id = containerColor))
                 ) {
                     DrawerHeader(viewModel = viewModel)
                     Spacer(modifier = Modifier.padding(10.dp))
@@ -139,7 +170,22 @@ fun MainScreen(navController: NavHostController, modifier: Modifier, viewModel: 
                 }
             }
         ) {
-            NavigationScreens(navController = navController, viewModel)
+            NavigationScreens(navController = navController, viewModel, updateContainerColor = { isDarkMode ->
+                updateContainerColor(isDarkMode)
+            })
+
+            LaunchedEffect(navController.currentBackStackEntry?.destination?.route) {
+                if (!appJustStarted && isSoundEffects) {
+                    if(mediaPlayer == null){
+                        mediaPlayer = MediaPlayer.create(context, legoSound)
+                    }
+                    mediaPlayer?.start()
+                    legoSound = R.raw.lego_sound_effect
+                    mediaPlayer?.setOnCompletionListener {
+                        it.release()
+                    }
+                }
+            }
         }
     }
 }
