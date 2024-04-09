@@ -66,4 +66,12 @@ sealed class NavItem(
         titleColor = Brown,
         contentDescription = "Rating"
     )
+
+    object QrCode : NavItem(
+        route = "QRCode",
+        title = "QRCode Results",
+        icon = R.drawable.help_icon,
+        titleColor = Brown,
+        contentDescription = "QRCode result"
+    )
 }

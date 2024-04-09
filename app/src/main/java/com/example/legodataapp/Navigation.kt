@@ -1,5 +1,6 @@
 package com.example.legodataapp
 
+import android.content.Context
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -22,6 +23,7 @@ import com.example.legodataapp.screens.MyLEGOScreen
 import com.example.legodataapp.screens.ProductScreen
 import com.example.legodataapp.screens.RatingScreen
 import com.example.legodataapp.screens.WishListScreen
+import com.example.legodataapp.screens.qrResultScreen
 import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.DarkYellow
 
@@ -57,6 +59,10 @@ fun NavigationScreens(
         composable(NavItem.Help.route) { HelpScreen() }
         composable(NavItem.Product.route) { ProductScreen() }
         composable(NavItem.Rating.route) { RatingScreen() }
+        composable(route = "${NavItem.QrCode.route}/{result}") { backStackEntry ->
+            val result = backStackEntry.arguments?.getString("result") ?: ""
+            qrResultScreen(result)
+        }
     }
 }
 

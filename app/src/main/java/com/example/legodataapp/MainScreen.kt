@@ -1,6 +1,7 @@
 package com.example.legodataapp
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -40,7 +41,8 @@ fun MainScreen(
     navController: NavHostController,
     modifier: Modifier,
     viewModel: AuthViewModel,
-    setViewModel: SetViewModel
+    setViewModel: SetViewModel,
+    context: Context
 ) {
     val currentRoute = getCurrentRoute(navController)
 
@@ -52,6 +54,7 @@ fun MainScreen(
         NavItem.Help.route -> NavItem.Help.title
         NavItem.Product.route -> NavItem.Product.title
         NavItem.Rating.route -> NavItem.Rating.title
+        "${NavItem.QrCode.route}/{result}" -> NavItem.QrCode.title
         else -> "Error!"
     }
 

@@ -89,4 +89,8 @@ dependencies {
     implementation ("androidx.compose.runtime:runtime-livedata:1.0.4")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    //QR code
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.google.zxing:core:3.4.1")
 }

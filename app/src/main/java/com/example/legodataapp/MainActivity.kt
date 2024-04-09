@@ -28,7 +28,8 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     modifier = Modifier,
                     authViewModel,
-                    setViewModel
+                    setViewModel,
+                    context = applicationContext
                 )
             }
         }
