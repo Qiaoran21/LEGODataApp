@@ -1,7 +1,7 @@
 package com.example.legodataapp
 
 import android.annotation.SuppressLint
-import androidx.activity.viewModels
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +11,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,7 +35,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.legodataapp.model.AuthViewModel
+
 import com.example.legodataapp.ui.theme.DarkerYellow
+
+import com.example.legodataapp.model.SetViewModel
+
 import com.example.legodataapp.ui.theme.fontFamily
 import android.media.MediaPlayer
 import android.util.Log
@@ -58,9 +61,13 @@ fun MainScreen(
     navController: NavHostController,
     modifier: Modifier,
     viewModel: AuthViewModel,
+    setViewModel: SetViewModel,
+    context: Context,
     isDarkMode: Boolean
+
 ) {
     val currentRoute = getCurrentRoute(navController)
+
     val pageTitle = when (currentRoute) {
         NavItem.Home.route -> NavItem.Home.title
         NavItem.WishList.route -> NavItem.WishList.title
@@ -69,6 +76,7 @@ fun MainScreen(
         NavItem.Help.route -> NavItem.Help.title
         NavItem.Product.route -> NavItem.Product.title
         NavItem.Rating.route -> NavItem.Rating.title
+        "${NavItem.QrCode.route}/{result}" -> NavItem.QrCode.title
         else -> "Error!"
     }
 
@@ -80,7 +88,9 @@ fun MainScreen(
     var appJustStarted by rememberSaveable { mutableStateOf(true) }
 
     val scope = rememberCoroutineScope()
-    val drawerState = rememberDrawerState(initialValue = androidx.compose.material.DrawerValue.Closed)
+    val drawerState = rememberDrawerState(
+        initialValue = androidx.compose.material.DrawerValue.Closed
+    )
 
     LaunchedEffect(Unit){
         appJustStarted = false
@@ -182,7 +192,7 @@ fun MainScreen(
                 }
             }
         ) {
-            NavigationScreens(navController = navController, viewModel, updateContainerColor = { isDarkMode ->
+            NavigationScreens(navController = navController, viewModel, setViewModel, updateContainerColor = { isDarkMode ->
                 updateContainerColor(isDarkMode)
                 updateTextColor(isDarkMode)
             })
@@ -202,3 +212,4 @@ fun MainScreen(
         }
     }
 }
+

@@ -19,11 +19,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.example.legodataapp.R
 import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.Cream
 import com.example.legodataapp.ui.theme.DarkYellow
 import com.example.legodataapp.ui.theme.fontFamily
-import com.example.legodataapp.R
 
 @Composable
 fun ProductScreen() {
@@ -47,16 +48,17 @@ fun ProductScreen() {
                     modifier = Modifier.size(400.dp)
                 )
                 Text(
-                    text = "Name",
+                    text = "Set Name: ",
                     color = Brown,
                     fontSize = 30.sp,
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
-                Text(text = "Pieces:", color = Brown, fontSize = 20.sp)
-                Text(text = "Item Number:", color = Brown, fontSize = 20.sp)
-                Text(text = "Theme:", color = Brown, fontSize = 20.sp)
+                Text(text = "Set Number: ", color = Brown, fontSize = 20.sp)
+                Text("Pieces: ", color = Brown, fontSize = 20.sp)
+                Text(text = "Theme: ", color = Brown, fontSize = 20.sp)
+                Text(text = "Year: ", color = Brown, fontSize = 20.sp)
             }
         }
     }

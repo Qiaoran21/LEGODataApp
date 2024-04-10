@@ -72,11 +72,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     implementation("androidx.navigation:navigation-compose:2.6.0")
-
     implementation("androidx.core:core-splashscreen:1.0.1")
-
     implementation("androidx.compose.material:material-icons-extended:1.6.2")
-
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.1")
 
     implementation("com.auth0.android:auth0:2.+")
@@ -86,4 +83,16 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.5.1")
 
     implementation("androidx.preference:preference:1.1.0")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("androidx.activity:activity-compose:1.4.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.0.4")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    //QR code
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.google.zxing:core:3.4.1")
 }

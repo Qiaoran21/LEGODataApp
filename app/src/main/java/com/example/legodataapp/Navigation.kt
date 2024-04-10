@@ -1,5 +1,6 @@
 package com.example.legodataapp
 
+import android.content.Context
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -15,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.legodataapp.model.AuthViewModel
+import com.example.legodataapp.model.SetViewModel
 import com.example.legodataapp.screens.AccountScreen
 import com.example.legodataapp.screens.HelpScreen
 import com.example.legodataapp.screens.HomeScreen
@@ -22,6 +24,7 @@ import com.example.legodataapp.screens.MyLEGOScreen
 import com.example.legodataapp.screens.ProductScreen
 import com.example.legodataapp.screens.RatingScreen
 import com.example.legodataapp.screens.WishListScreen
+import com.example.legodataapp.screens.qrResultScreen
 import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.DarkYellow
 
@@ -44,15 +47,24 @@ fun BottomNavBar(navController: NavController, modifier: Modifier, containerColo
 }
 
 @Composable
-fun NavigationScreens(navController: NavHostController, viewModel: AuthViewModel, updateContainerColor: (Boolean) -> Unit) {
+fun NavigationScreens(
+    navController: NavHostController,
+    viewModel: AuthViewModel,
+    setViewModel: SetViewModel,
+    updateContainerColor: (Boolean) -> Unit
+) {
     NavHost(navController, startDestination = NavItem.Home.route) {
         composable(NavItem.WishList.route) { WishListScreen(navController = navController, hasRating = true) }
         composable(NavItem.MyLEGO.route) { MyLEGOScreen(navController = navController, hasRating = false) }
-        composable(NavItem.Home.route) { HomeScreen() }
+        composable(NavItem.Home.route) { HomeScreen(setViewModel = setViewModel, navController) }
         composable(NavItem.Account.route) { AccountScreen(navController = navController, viewModel, updateContainerColor) }
         composable(NavItem.Help.route) { HelpScreen() }
         composable(NavItem.Product.route) { ProductScreen() }
         composable(NavItem.Rating.route) { RatingScreen() }
+        composable(route = "${NavItem.QrCode.route}/{result}") { backStackEntry ->
+            val result = backStackEntry.arguments?.getString("result") ?: ""
+            qrResultScreen(result)
+        }
     }
 }
 
