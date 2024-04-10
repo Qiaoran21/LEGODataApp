@@ -1,5 +1,6 @@
 package com.example.legodataapp
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -14,9 +15,13 @@ import androidx.activity.viewModels
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.LocalContext
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
+import com.auth0.android.result.Credentials
 
 //import com.example.legodataapp.model.SearchViewModel
 import com.example.legodataapp.model.SetViewModel
+import com.example.legodataapp.model.User
 
 
 class MainActivity : ComponentActivity() {
@@ -34,18 +39,13 @@ class MainActivity : ComponentActivity() {
 
             LEGODataAppTheme (darkMode = isDarkMode) {
                 val navController = rememberNavController()
-
-
-
-                    MainScreen(
-                      navController = navController,
-                      modifier = Modifier,
-                      authViewModel,
-                      setViewModel,
-                      context = applicationContext,
-                      isDarkMode)
-
-
+                MainScreen(
+                  navController = navController,
+                  modifier = Modifier,
+                  authViewModel,
+                  setViewModel,
+                  context = applicationContext,
+                  isDarkMode)
             }
         }
     }

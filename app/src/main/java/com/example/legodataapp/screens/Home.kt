@@ -5,15 +5,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +25,7 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -42,6 +46,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
@@ -55,18 +60,25 @@ import com.example.legodataapp.ui.theme.Cream
 import com.example.legodataapp.ui.theme.DarkYellow
 import com.example.legodataapp.ui.theme.fontFamily
 import com.example.legodataapp.data.LegoSet
+import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.model.SetViewModel
+import com.example.legodataapp.model.User
 import com.example.legodataapp.ui.theme.LightBrown
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun HomeScreen(setViewModel: SetViewModel, navController: NavController) {
+fun HomeScreen(setViewModel: SetViewModel, authViewModel: AuthViewModel, navController: NavController) {
     val sets by setViewModel.sets.observeAsState()
     var searchInput by remember { mutableStateOf("") }
     var textResult by remember { mutableStateOf("") }
     val context = LocalContext.current
+
+    var isAuthenticated by remember { mutableStateOf(authViewModel.userIsAuthenticated)}
+    LaunchedEffect(Unit) {
+        isAuthenticated = authViewModel.userIsAuthenticated
+    }
 
     val qrCodeLauncher = rememberLauncherForActivityResult(ScanContract()) {
         result ->
@@ -162,14 +174,14 @@ fun HomeScreen(setViewModel: SetViewModel, navController: NavController) {
                 )
             }
             items(filteredSets ?: emptyList()) { set ->
-                SetCard(set, navController)
+                SetCard(set, isAuthenticated, navController)
             }
         }
     }
 }
 
 @Composable
-fun SetCard(legoSet: LegoSet, navController: NavController) {
+fun SetCard(legoSet: LegoSet, isAuthenticated: Boolean, navController: NavController) {
     Card (
         modifier = Modifier
             .padding(20.dp)
@@ -198,6 +210,26 @@ fun SetCard(legoSet: LegoSet, navController: NavController) {
             Text("Set Number: ${legoSet.set_num}")
             Text("Theme: ${legoSet.theme_id}")
             Text("Year: ${legoSet.year}")
+            if(isAuthenticated) {
+                Row {
+                    // Add to My LEGO Button
+                    Button(onClick = { /*TODO*/ }, Modifier.height(55.dp).padding(5.dp)) {
+                        Text(
+                            text = "Add to Wishlist",
+                            fontSize = 15.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    // Add to Wishlist Button
+                    Button(onClick = { /*TODO*/ }, Modifier.height(55.dp)) {
+                        Text(
+                            text = "Add to My LEGO",
+                            fontSize = 15.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
         }
     }
 }

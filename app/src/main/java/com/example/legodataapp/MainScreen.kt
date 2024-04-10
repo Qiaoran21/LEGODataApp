@@ -52,6 +52,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.colorResource
+import com.example.legodataapp.model.User
 import com.example.legodataapp.ui.theme.Pink40
 
 
@@ -65,8 +66,23 @@ fun MainScreen(
     setViewModel: SetViewModel,
     context: Context,
     isDarkMode: Boolean
-
 ) {
+    /**
+    var masterKey = MasterKey.Builder(this@MainActivity)
+    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+    .build()
+    val sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
+    this@MainActivity,
+    "EncryptedPrefs",
+    masterKey,
+    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
+    val idToken = sharedPreferences.getString("User_ID_Token", "")
+     **/
+    val loadSettings = LoadSettings()
+    //val userToken = loadSettings.loadUserState((context)).toString()
+
     val currentRoute = getCurrentRoute(navController)
 
     val pageTitle = when (currentRoute) {
@@ -80,10 +96,7 @@ fun MainScreen(
         "${NavItem.QrCode.route}/{result}" -> NavItem.QrCode.title
         else -> "Error!"
     }
-
-    val context = LocalContext.current
     var mediaPlayer: MediaPlayer? = null
-    val loadSettings = LoadSettings()
     val isSoundEffects = loadSettings.loadSoundEffectsState(context)
     var legoSound by rememberSaveable { mutableIntStateOf(R.raw.lego_swoosh) }
     var appJustStarted by rememberSaveable { mutableStateOf(true) }
@@ -92,10 +105,6 @@ fun MainScreen(
     val drawerState = rememberDrawerState(
         initialValue = androidx.compose.material.DrawerValue.Closed
     )
-
-    LaunchedEffect(Unit){
-        appJustStarted = false
-    }
 
     var containerColor by rememberSaveable { mutableStateOf(
         if(isDarkMode){R.color.DarkerYellow}else{R.color.DarkYellow})
@@ -109,6 +118,14 @@ fun MainScreen(
     }
     fun updateTextColor(isDarkMode: Boolean) {
         textColor = if (isDarkMode) R.color.LightText else R.color.DarkText
+    }
+
+    LaunchedEffect(Unit) {
+        appJustStarted = false
+        val userToken = loadSettings.loadUserState((context)).toString()
+        if (userToken != "") {
+            viewModel.login(User(userToken))
+        }
     }
 
     Scaffold(

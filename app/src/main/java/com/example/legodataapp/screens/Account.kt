@@ -1,56 +1,60 @@
 package com.example.legodataapp.screens
 
+// Imports for Preferences
+import android.annotation.SuppressLint
 import android.content.Context
-import android.preference.Preference
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.DoNotDisturb
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Speaker
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
+import com.auth0.android.result.Credentials
 import com.example.legodataapp.Login
 import com.example.legodataapp.Logout
-import com.example.legodataapp.Product
 import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.model.User
 import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.Cream
-import com.example.legodataapp.ui.theme.DarkYellow
-import com.example.legodataapp.ui.theme.LightBrown
-import com.example.legodataapp.ui.theme.fontFamily
-// Imports for Preferences
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.Speaker
-import androidx.compose.material.icons.filled.DoNotDisturb
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.R
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import com.example.legodataapp.LoadSettings
 import com.example.legodataapp.ui.theme.DarkText
+import com.example.legodataapp.ui.theme.DarkYellow
 import com.example.legodataapp.ui.theme.DarkerYellow
 import com.example.legodataapp.ui.theme.LEGODataAppTheme
+import com.example.legodataapp.ui.theme.LightBrown
 import com.example.legodataapp.ui.theme.LightText
+import com.example.legodataapp.ui.theme.fontFamily
 
 @Composable
 fun AccountScreen(navController: NavController, viewModel: AuthViewModel, updateContainerColor: (Boolean) -> Unit) {
@@ -95,6 +99,8 @@ fun AccountScreen(navController: NavController, viewModel: AuthViewModel, update
                 onClickAction = {
                     Logout(onLogoutSuccess = {
                         viewModel.logout()
+                        deleteUserState(context)
+                        viewModel.userIsAuthenticated = false
                     }, context)
                 }
                 buttonText = "Logout"
@@ -102,6 +108,7 @@ fun AccountScreen(navController: NavController, viewModel: AuthViewModel, update
                 onClickAction = {
                     Login(onLoginSuccess = {Credentials ->
                         viewModel.login(User(Credentials.idToken))
+                        saveUserState(context, Credentials)
                     }, context)
                 }
                 buttonText = "Login"
@@ -178,6 +185,7 @@ fun ToggleButton(
 
 private const val DARK_MODE_PREF_KEY = "dark_mode_preference"
 private const val SOUND_EFFECTS_PREF_KEY = "sound_effects_preference"
+private const val USER_ID_PREF_KEY = "user_id_preference"
 
 // Dark Mode
 private fun loadDarkModeState(context: Context): Boolean {
@@ -200,3 +208,48 @@ private fun saveSoundEffectsState(isSoundEffects: Boolean, context: Context) {
     val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
     sharedPreferences.edit().putBoolean(SOUND_EFFECTS_PREF_KEY, isSoundEffects).apply()
 }
+
+private fun saveUserState(context: Context, credentials: Credentials) {
+    val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    sharedPreferences.edit().putString(USER_ID_PREF_KEY, credentials.idToken).apply()
+}
+
+private fun deleteUserState(context: Context) {
+    val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    sharedPreferences.edit().putString(USER_ID_PREF_KEY, "").apply()
+    sharedPreferences.edit().remove(USER_ID_PREF_KEY).apply()
+}
+
+/**
+@SuppressLint("CommitPrefEdits")
+private fun saveUserState(context: Context, creds: Credentials){
+    var masterKey = MasterKey.Builder(context)
+        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+        .build()
+    val sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
+        context,
+        "EncryptedPrefs",
+        masterKey,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
+    val editor = sharedPreferences.edit()
+    editor.putString("User_ID_Token", creds.idToken).apply()
+}
+
+@SuppressLint("CommitPrefEdits")
+private fun deleteUserState(context: Context){
+    var masterKey = MasterKey.Builder(context)
+        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+        .build()
+    val sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
+        context,
+        "EncryptedPrefs",
+        masterKey,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
+    val editor = sharedPreferences.edit()
+    editor.clear().apply()
+}
+**/

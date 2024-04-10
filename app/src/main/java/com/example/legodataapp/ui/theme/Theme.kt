@@ -52,7 +52,6 @@ fun LEGODataAppTheme(
     content: @Composable (ColorScheme) -> Unit
 ) {
     val colorScheme = if (darkMode) DarkColorScheme else LightColorScheme
-    Log.d("YOYOYOYOYO", colorScheme.primary.toString())
 
     // var containerColor by rememberSaveable { mutableStateOf(colorScheme.primary) }
 

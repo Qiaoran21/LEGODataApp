@@ -56,7 +56,7 @@ fun NavigationScreens(
     NavHost(navController, startDestination = NavItem.Home.route) {
         composable(NavItem.WishList.route) { WishListScreen(navController = navController, hasRating = true) }
         composable(NavItem.MyLEGO.route) { MyLEGOScreen(navController = navController, hasRating = false) }
-        composable(NavItem.Home.route) { HomeScreen(setViewModel = setViewModel, navController) }
+        composable(NavItem.Home.route) { HomeScreen(setViewModel = setViewModel, authViewModel = viewModel, navController) }
         composable(NavItem.Account.route) { AccountScreen(navController = navController, viewModel, updateContainerColor) }
         composable(NavItem.Help.route) { HelpScreen() }
         composable(NavItem.Product.route) { ProductScreen() }
