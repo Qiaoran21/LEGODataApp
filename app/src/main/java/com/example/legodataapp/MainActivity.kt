@@ -36,10 +36,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
 
 
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+
                     MainScreen(
                       navController = navController,
                       modifier = Modifier,
@@ -47,7 +44,7 @@ class MainActivity : ComponentActivity() {
                       setViewModel,
                       context = applicationContext,
                       isDarkMode)
-                }
+
 
             }
         }

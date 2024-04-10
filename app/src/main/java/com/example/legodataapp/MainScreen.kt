@@ -43,6 +43,7 @@ import com.example.legodataapp.model.SetViewModel
 import com.example.legodataapp.ui.theme.fontFamily
 import android.media.MediaPlayer
 import android.util.Log
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -198,11 +199,13 @@ fun MainScreen(
             })
 
             LaunchedEffect(navController.currentBackStackEntry?.destination?.route) {
-                if (!appJustStarted && isSoundEffects) {
+                if (!appJustStarted) {
                     if(mediaPlayer == null){
                         mediaPlayer = MediaPlayer.create(context, legoSound)
                     }
-                    mediaPlayer?.start()
+                    if (isSoundEffects) {
+                        mediaPlayer?.start()
+                    }
                     legoSound = R.raw.lego_sound_effect
                     mediaPlayer?.setOnCompletionListener {
                         it.release()
