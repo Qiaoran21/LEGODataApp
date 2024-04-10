@@ -42,12 +42,15 @@ import androidx.compose.material.icons.filled.Speaker
 import androidx.compose.material.icons.filled.DoNotDisturb
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.R
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.legodataapp.LoadSettings
+import com.example.legodataapp.ui.theme.DarkText
 import com.example.legodataapp.ui.theme.DarkerYellow
 import com.example.legodataapp.ui.theme.LEGODataAppTheme
+import com.example.legodataapp.ui.theme.LightText
 
 @Composable
 fun AccountScreen(navController: NavController, viewModel: AuthViewModel, updateContainerColor: (Boolean) -> Unit) {
@@ -104,13 +107,13 @@ fun AccountScreen(navController: NavController, viewModel: AuthViewModel, update
                 buttonText = "Login"
             }
             Spacer(modifier = Modifier.padding(10.dp))
-            Button(onClick = onClickAction, colors = ButtonDefaults.buttonColors(DarkYellow)) {
+            Button(onClick = onClickAction, colors = ButtonDefaults.buttonColors(if(isDarkMode) DarkerYellow else DarkYellow)) {
                 Text(
                     text = buttonText,
                     fontSize = 15.sp,
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold,
-                    color = Brown)
+                    color = if(isDarkMode) LightText else DarkText)
             }
             Spacer(modifier = Modifier.padding(10.dp))
             // Preference added for configuring Dark Mode
@@ -121,7 +124,8 @@ fun AccountScreen(navController: NavController, viewModel: AuthViewModel, update
                     updateContainerColor(isDarkMode)
                 },
                 icon = if (isDarkMode) Icons.Filled.DarkMode else Icons.Filled.LightMode,
-                text = if (isDarkMode) "Turn Off Dark Mode" else "Turn On Dark Mode"
+                text = if (isDarkMode) "Turn Off Dark Mode" else "Turn On Dark Mode",
+                color = Brown
             )
             Spacer(modifier = Modifier.padding(10.dp))
             // Preference added for configuring Sound Effects
@@ -131,7 +135,8 @@ fun AccountScreen(navController: NavController, viewModel: AuthViewModel, update
                     toggleSoundEffects()
                 },
                 icon = if (isSoundEffects) Icons.Filled.Speaker else Icons.Filled.DoNotDisturb,
-                text = if (isSoundEffects) "Turn Off Sound Effects" else "Turn On Sound Effects"
+                text = if (isSoundEffects) "Turn Off Sound Effects" else "Turn On Sound Effects",
+                color = Brown
             )
         }
     }
@@ -144,7 +149,8 @@ fun ToggleButton(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     icon: ImageVector,
-    text: String
+    text: String,
+    color: Color
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -166,7 +172,7 @@ fun ToggleButton(
             }
         )
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = text)
+        Text(text = text, color = color)
     }
 }
 

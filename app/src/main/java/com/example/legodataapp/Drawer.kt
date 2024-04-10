@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.legodataapp.model.AuthViewModel
+import androidx.compose.ui.graphics.Color
 import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.fontFamily
 
@@ -44,6 +45,7 @@ fun DrawerHeader(viewModel: AuthViewModel) {
 fun DrawerBody(
     items: List<NavItem>,
     modifier: Modifier = Modifier,
+    contentColor: Color,
     onItemClick: (NavItem) -> Unit
 ) {
     LazyColumn(modifier) {
@@ -59,12 +61,12 @@ fun DrawerBody(
                 Icon(
                     painter = painterResource(id = item.icon),
                     contentDescription = item.contentDescription,
-                    tint = Brown
+                    tint = contentColor
                 )
                 Spacer(modifier = Modifier.width(15.dp))
                 Text(
                     text = item.title,
-                    color = Brown,
+                    color = contentColor,
                     fontSize = 20.sp,
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold

@@ -26,7 +26,7 @@ import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.DarkYellow
 
 @Composable
-fun BottomNavBar(navController: NavController, modifier: Modifier, containerColor: Color) {
+fun BottomNavBar(navController: NavController, modifier: Modifier, containerColor: Color, contentColor: Color) {
     val navItems = listOf(NavItem.Home, NavItem.WishList, NavItem.MyLEGO, NavItem.Account)
 
     NavigationBar(containerColor = containerColor) {
@@ -36,7 +36,7 @@ fun BottomNavBar(navController: NavController, modifier: Modifier, containerColo
                 icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },
                 onClick = { navController.navigate(item.route) },
                 colors = NavigationBarItemDefaults.colors(
-                    unselectedIconColor = Brown
+                    unselectedIconColor = contentColor
                 )
             )
         }

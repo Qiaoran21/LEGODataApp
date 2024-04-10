@@ -48,6 +48,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.colorResource
+import com.example.legodataapp.ui.theme.Pink40
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,16 +82,22 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = androidx.compose.material.DrawerValue.Closed)
 
-    var containerColor by rememberSaveable { mutableStateOf(
-        if(isDarkMode){R.color.DarkerYellow}else{R.color.DarkYellow})
-    }
-
     LaunchedEffect(Unit){
         appJustStarted = false
     }
 
+    var containerColor by rememberSaveable { mutableStateOf(
+        if(isDarkMode){R.color.DarkerYellow}else{R.color.DarkYellow})
+    }
+    var textColor by rememberSaveable { mutableStateOf(
+        if(isDarkMode){R.color.LightText}else{R.color.DarkText})
+    }
+
     fun updateContainerColor(isDarkMode: Boolean) {
         containerColor = if (isDarkMode) R.color.DarkerYellow else R.color.DarkYellow
+    }
+    fun updateTextColor(isDarkMode: Boolean) {
+        textColor = if (isDarkMode) R.color.LightText else R.color.DarkText
     }
 
     Scaffold(
@@ -98,7 +105,7 @@ fun MainScreen(
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = colorResource(id = containerColor),
-                    titleContentColor = Brown,
+                    titleContentColor = colorResource(id = textColor),
                 ),
                 title = {
                     Text(
@@ -106,7 +113,8 @@ fun MainScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = textColor)
                     )
                 },
                 navigationIcon = {
@@ -120,7 +128,8 @@ fun MainScreen(
                             } }) {
                         Icon(
                             imageVector = Icons.Rounded.Menu,
-                            contentDescription = "Menu"
+                            contentDescription = "Menu",
+                            tint = colorResource(id = textColor)
                         )
                     }
                 },
@@ -128,7 +137,8 @@ fun MainScreen(
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(
                             imageVector = Icons.Rounded.Search,
-                            contentDescription = "Search"
+                            contentDescription = "Search",
+                            tint = colorResource(id = textColor)
                         )
                     }
                 }
@@ -139,7 +149,8 @@ fun MainScreen(
                 BottomNavBar(
                     navController = navController,
                     modifier = modifier,
-                    containerColor = colorResource(id = containerColor)
+                    containerColor = colorResource(id = containerColor),
+                    contentColor = colorResource(id = textColor)
                 )
             }
         }
@@ -160,7 +171,8 @@ fun MainScreen(
                             NavItem.Account,
                             NavItem.Help
                         ),
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        contentColor = colorResource(id = textColor)
                     ) { item ->
                         scope.launch {
                             drawerState.close()
@@ -172,6 +184,7 @@ fun MainScreen(
         ) {
             NavigationScreens(navController = navController, viewModel, updateContainerColor = { isDarkMode ->
                 updateContainerColor(isDarkMode)
+                updateTextColor(isDarkMode)
             })
 
             LaunchedEffect(navController.currentBackStackEntry?.destination?.route) {
