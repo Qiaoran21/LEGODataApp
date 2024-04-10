@@ -8,6 +8,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -28,17 +29,17 @@ import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.DarkYellow
 
 @Composable
-fun BottomNavBar(navController: NavController, modifier: Modifier) {
+fun BottomNavBar(navController: NavController, modifier: Modifier, containerColor: Color, contentColor: Color) {
     val navItems = listOf(NavItem.Home, NavItem.WishList, NavItem.MyLEGO, NavItem.Account)
 
-    NavigationBar(containerColor = DarkYellow) {
+    NavigationBar(containerColor = containerColor) {
         navItems.forEachIndexed { index, item ->
             NavigationBarItem(
                 selected = false,
                 icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },
                 onClick = { navController.navigate(item.route) },
                 colors = NavigationBarItemDefaults.colors(
-                    unselectedIconColor = Brown
+                    unselectedIconColor = contentColor
                 )
             )
         }
@@ -49,13 +50,14 @@ fun BottomNavBar(navController: NavController, modifier: Modifier) {
 fun NavigationScreens(
     navController: NavHostController,
     viewModel: AuthViewModel,
-    setViewModel: SetViewModel
+    setViewModel: SetViewModel,
+    updateContainerColor: (Boolean) -> Unit
 ) {
     NavHost(navController, startDestination = NavItem.Home.route) {
         composable(NavItem.WishList.route) { WishListScreen(navController = navController, hasRating = true) }
         composable(NavItem.MyLEGO.route) { MyLEGOScreen(navController = navController, hasRating = false) }
         composable(NavItem.Home.route) { HomeScreen(setViewModel = setViewModel, navController) }
-        composable(NavItem.Account.route) { AccountScreen(navController = navController, viewModel) }
+        composable(NavItem.Account.route) { AccountScreen(navController = navController, viewModel, updateContainerColor) }
         composable(NavItem.Help.route) { HelpScreen() }
         composable(NavItem.Product.route) { ProductScreen() }
         composable(NavItem.Rating.route) { RatingScreen() }

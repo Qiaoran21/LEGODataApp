@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
@@ -27,11 +28,30 @@ import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.DarkYellow
 import kotlinx.coroutines.launch
 import androidx.compose.material.rememberDrawerState
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.legodataapp.model.AuthViewModel
+
+import com.example.legodataapp.ui.theme.DarkerYellow
+
 import com.example.legodataapp.model.SetViewModel
+
 import com.example.legodataapp.ui.theme.fontFamily
+import android.media.MediaPlayer
+import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.colorResource
+import com.example.legodataapp.ui.theme.Pink40
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +62,9 @@ fun MainScreen(
     modifier: Modifier,
     viewModel: AuthViewModel,
     setViewModel: SetViewModel,
-    context: Context
+    context: Context,
+    isDarkMode: Boolean
+
 ) {
     val currentRoute = getCurrentRoute(navController)
 
@@ -58,17 +80,42 @@ fun MainScreen(
         else -> "Error!"
     }
 
+    val context = LocalContext.current
+    var mediaPlayer: MediaPlayer? = null
+    val loadSettings = LoadSettings()
+    val isSoundEffects = loadSettings.loadSoundEffectsState(context)
+    var legoSound by rememberSaveable { mutableIntStateOf(R.raw.lego_swoosh) }
+    var appJustStarted by rememberSaveable { mutableStateOf(true) }
+
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(
         initialValue = androidx.compose.material.DrawerValue.Closed
     )
 
+    LaunchedEffect(Unit){
+        appJustStarted = false
+    }
+
+    var containerColor by rememberSaveable { mutableStateOf(
+        if(isDarkMode){R.color.DarkerYellow}else{R.color.DarkYellow})
+    }
+    var textColor by rememberSaveable { mutableStateOf(
+        if(isDarkMode){R.color.LightText}else{R.color.DarkText})
+    }
+
+    fun updateContainerColor(isDarkMode: Boolean) {
+        containerColor = if (isDarkMode) R.color.DarkerYellow else R.color.DarkYellow
+    }
+    fun updateTextColor(isDarkMode: Boolean) {
+        textColor = if (isDarkMode) R.color.LightText else R.color.DarkText
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DarkYellow,
-                    titleContentColor = Brown,
+                    containerColor = colorResource(id = containerColor),
+                    titleContentColor = colorResource(id = textColor),
                 ),
                 title = {
                     Text(
@@ -76,7 +123,8 @@ fun MainScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = textColor)
                     )
                 },
                 navigationIcon = {
@@ -90,25 +138,29 @@ fun MainScreen(
                             } }) {
                         Icon(
                             imageVector = Icons.Rounded.Menu,
-                            contentDescription = "Menu"
+                            contentDescription = "Menu",
+                            tint = colorResource(id = textColor)
                         )
                     }
                 },
-//                actions = {
-//                    IconButton(onClick = { /* TODO */ }) {
-//                        Icon(
-//                            imageVector = Icons.Rounded.Search,
-//                            contentDescription = "Search"
-//                        )
-//                    }
-//                }
+                actions = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Search,
+                            contentDescription = "Search",
+                            tint = colorResource(id = textColor)
+                        )
+                    }
+                }
             )
         },
         bottomBar = {
-            BottomAppBar(containerColor = DarkYellow) {
+            BottomAppBar(containerColor = colorResource(id = containerColor)) {
                 BottomNavBar(
                     navController = navController,
-                    modifier = modifier
+                    modifier = modifier,
+                    containerColor = colorResource(id = containerColor),
+                    contentColor = colorResource(id = textColor)
                 )
             }
         }
@@ -117,7 +169,7 @@ fun MainScreen(
             drawerState = drawerState,
             drawerContent = {
                 Column(
-                    modifier = Modifier.background(DarkYellow)
+                    modifier = Modifier.background(colorResource(id = containerColor))
                 ) {
                     DrawerHeader(viewModel = viewModel)
                     Spacer(modifier = Modifier.padding(10.dp))
@@ -129,7 +181,8 @@ fun MainScreen(
                             NavItem.Account,
                             NavItem.Help
                         ),
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        contentColor = colorResource(id = textColor)
                     ) { item ->
                         scope.launch {
                             drawerState.close()
@@ -139,7 +192,23 @@ fun MainScreen(
                 }
             }
         ) {
-            NavigationScreens(navController = navController, viewModel, setViewModel)
+            NavigationScreens(navController = navController, viewModel, setViewModel, updateContainerColor = { isDarkMode ->
+                updateContainerColor(isDarkMode)
+                updateTextColor(isDarkMode)
+            })
+
+            LaunchedEffect(navController.currentBackStackEntry?.destination?.route) {
+                if (!appJustStarted && isSoundEffects) {
+                    if(mediaPlayer == null){
+                        mediaPlayer = MediaPlayer.create(context, legoSound)
+                    }
+                    mediaPlayer?.start()
+                    legoSound = R.raw.lego_sound_effect
+                    mediaPlayer?.setOnCompletionListener {
+                        it.release()
+                    }
+                }
+            }
         }
     }
 }
