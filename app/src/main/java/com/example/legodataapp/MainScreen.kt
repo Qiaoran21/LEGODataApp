@@ -2,12 +2,13 @@ package com.example.legodataapp
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
@@ -24,36 +25,33 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
-import com.example.legodataapp.ui.theme.Brown
-import com.example.legodataapp.ui.theme.DarkYellow
 import kotlinx.coroutines.launch
 import androidx.compose.material.rememberDrawerState
-import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.legodataapp.model.AuthViewModel
 
-import com.example.legodataapp.ui.theme.DarkerYellow
-
 import com.example.legodataapp.model.SetViewModel
 
 import com.example.legodataapp.ui.theme.fontFamily
 import android.media.MediaPlayer
-import android.util.Log
-import androidx.compose.material.icons.rounded.Search
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.core.content.ContextCompat
 import com.example.legodataapp.model.User
-import com.example.legodataapp.ui.theme.Pink40
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,6 +65,65 @@ fun MainScreen(
     context: Context,
     isDarkMode: Boolean
 ) {
+    var textResult by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    val qrCodeLauncher = rememberLauncherForActivityResult(ScanContract()) { result ->
+        if (result.contents == null) {
+            textResult = "ERROR"
+        } else {
+            textResult = result.contents
+            if (textResult.startsWith("http")) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(result.contents))
+                context.startActivity(intent)
+            } else {
+                val intent = context.packageManager.getLaunchIntentForPackage(result.contents)
+                if (intent != null) {
+                    context.startActivity(intent)
+                } else {
+                    navController.navigate("${NavItem.QrCode.route}/${result.contents}")
+                }
+            }
+        }
+    }
+
+    fun showCamera() {
+        val options = ScanOptions()
+        options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+        options.setPrompt("Scan QR Code")
+        options.setCameraId(0)
+        options.setBeepEnabled(false)
+        options.setOrientationLocked(false)
+
+        qrCodeLauncher.launch(options)
+    }
+
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        isGranted ->
+        if (isGranted) {
+            showCamera()
+        } else {
+            textResult = "Camera permission denied."
+        }
+    }
+
+    fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ){
+            showCamera()
+        }
+        else {
+            requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+        }
+    }
+
+
+
     /**
     var masterKey = MasterKey.Builder(this@MainActivity)
     .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -162,11 +219,11 @@ fun MainScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { checkCameraPermission() })
+                    {
                         Icon(
-                            imageVector = Icons.Rounded.Search,
-                            contentDescription = "Search",
-                            tint = colorResource(id = textColor)
+                            painter = painterResource(id = R.drawable.qr_scan),
+                            contentDescription = "QR scan"
                         )
                     }
                 }
@@ -210,10 +267,14 @@ fun MainScreen(
                 }
             }
         ) {
-            NavigationScreens(navController = navController, viewModel, setViewModel, updateContainerColor = { isDarkMode ->
+            NavigationScreens(
+                navController = navController,
+                viewModel,
+                setViewModel,
+            ) { isDarkMode ->
                 updateContainerColor(isDarkMode)
                 updateTextColor(isDarkMode)
-            })
+            }
 
             LaunchedEffect(navController.currentBackStackEntry?.destination?.route) {
                 if (!appJustStarted) {

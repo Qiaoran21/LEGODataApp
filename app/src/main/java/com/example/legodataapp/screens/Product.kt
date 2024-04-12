@@ -19,7 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.example.legodataapp.R
 import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.Cream
@@ -48,7 +47,7 @@ fun ProductScreen() {
                     modifier = Modifier.size(400.dp)
                 )
                 Text(
-                    text = "Set Name: ",
+                    text = "Set name:",
                     color = Brown,
                     fontSize = 30.sp,
                     fontFamily = fontFamily,
