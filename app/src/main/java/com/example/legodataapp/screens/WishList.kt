@@ -22,23 +22,27 @@ import com.example.legodataapp.data.LegoSet
 import com.example.legodataapp.ui.theme.Cream
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.legodataapp.model.SetViewModel
 import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.DarkYellow
 import com.example.legodataapp.ui.theme.fontFamily
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun WishListScreen(
     navController: NavController,
     hasRating: Boolean,
     wishlistItems: LiveData<List<LegoSet>>,
-    onRemoveFromWishlist: (LegoSet) -> Unit
+    setViewModel: SetViewModel
 ) {
-    val items = wishlistItems.value
+    val items by wishlistItems.observeAsState(initial = emptyList())
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -47,12 +51,12 @@ fun WishListScreen(
             .fillMaxSize()
             .background(Cream)
     ) {
-        if (!items.isNullOrEmpty()) {
+        if (items.isNotEmpty()) {
             items.forEach { item ->
-                WishListItem(navController, hasRating, item, onRemoveFromWishlist)
+                WishListItem(navController, hasRating, item, setViewModel)
             }
         } else {
-            Text("Your wishlist is empty")
+            Text("Your wishlist is empty!")
         }
     }
 }
@@ -62,7 +66,7 @@ fun WishListItem(
     navController: NavController,
     hasRating: Boolean,
     legoSet: LegoSet,
-    onRemoveFromWishlist: (LegoSet) -> Unit
+    setViewModel: SetViewModel
 ) {
     Card(
         modifier = Modifier
@@ -92,7 +96,7 @@ fun WishListItem(
                         modifier = Modifier
                     )
                     Spacer(modifier = Modifier.padding(5.dp))
-                    Text("Item Number: ${legoSet.set_num}", color = Brown)
+                    Text("Set Number: ${legoSet.set_num}", color = Brown)
                     Spacer(modifier = Modifier.padding(5.dp))
                 }
             }
@@ -103,7 +107,7 @@ fun WishListItem(
             ) {
                 Button(
                     onClick = {
-                        onRemoveFromWishlist(legoSet)
+                        setViewModel.removeFromWishlist(legoSet)
                         showToast(context, "Item removed from Wishlist!")
                     },
                     modifier = Modifier.padding(10.dp)

@@ -65,15 +65,18 @@ fun NavigationScreens(
             WishListScreen(
                 navController = navController,
                 hasRating = true,
-                wishlistItems = setViewModel.wishlistItems
-            ) { item -> setViewModel.removeFromWishlist(item) }
+                wishlistItems = setViewModel.wishlistSets,
+                setViewModel = setViewModel
+            )
         }
+
         composable(NavItem.MyLEGO.route) {
             MyLEGOScreen(
                 navController = navController,
                 hasRating = false,
-                myLegoListItems = setViewModel.myLegoListItems
-            ) { item -> setViewModel.removeFromMyLegolist(item) }
+                myLegoListItems = setViewModel.myLegoListItems,
+                setViewModel = setViewModel
+            )
         }
 
         composable(NavItem.Home.route) {
@@ -123,7 +126,8 @@ fun NavigationScreens(
                     setViewModel.addToMyLegolist(legoSet)
                     showToast(context = context, message = "Added to My LEGO")
                 },
-                context = context
+                context = context,
+                navController = navController
             )
         }
     }

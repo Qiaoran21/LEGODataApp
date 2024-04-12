@@ -15,13 +15,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.legodataapp.NavItem
@@ -30,15 +30,18 @@ import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.Cream
 import com.example.legodataapp.ui.theme.DarkYellow
 import com.example.legodataapp.ui.theme.fontFamily
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.LiveData
+import com.example.legodataapp.model.SetViewModel
 
 @Composable
 fun MyLEGOScreen(
     navController: NavController,
     hasRating: Boolean,
     myLegoListItems: LiveData<List<LegoSet>>,
-    onRemoveFromMyLegoList: (LegoSet) -> Unit
+    setViewModel: SetViewModel
 ) {
-    val items = myLegoListItems.value
+    val items by myLegoListItems.observeAsState(initial = emptyList())
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -47,9 +50,9 @@ fun MyLEGOScreen(
             .fillMaxSize()
             .background(Cream)
     ) {
-        if (!items.isNullOrEmpty()) {
+        if (items.isNotEmpty()) {
             items.forEach { item ->
-                MyLegoItem(navController, hasRating, item, onRemoveFromMyLegoList)
+                MyLegoItem(navController, hasRating, item, setViewModel)
             }
         } else {
             Text("Your Lego list is empty")
@@ -62,7 +65,7 @@ fun MyLegoItem(
     navController: NavController,
     hasRating: Boolean,
     legoSet: LegoSet,
-    onRemoveFromMyLegoList: (LegoSet) -> Unit
+    setViewModel: SetViewModel
 ) {
     Card(
         modifier = Modifier
@@ -92,11 +95,12 @@ fun MyLegoItem(
                         modifier = Modifier
                     )
                     Spacer(modifier = Modifier.padding(5.dp))
-                    Text("Item Number: ${legoSet.set_num}", color = Brown)
+                    Text("Set Number: ${legoSet.set_num}", color = Brown)
                     Spacer(modifier = Modifier.padding(5.dp))
                 }
             }
-            Row (modifier = Modifier.fillMaxWidth(),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
                 Button(
@@ -113,7 +117,7 @@ fun MyLegoItem(
                 val context = LocalContext.current
                 Button(
                     onClick = {
-                        onRemoveFromMyLegoList(legoSet)
+                        setViewModel.removeFromMyLegolist(legoSet)
                         showToast(context, "Item removed from My LEGO!")
                     },
                     modifier = Modifier.padding(10.dp)
@@ -129,4 +133,3 @@ fun MyLegoItem(
         }
     }
 }
-

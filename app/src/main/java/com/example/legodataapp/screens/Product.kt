@@ -20,13 +20,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -37,7 +37,8 @@ import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.Cream
 import com.example.legodataapp.ui.theme.DarkText
 import com.example.legodataapp.ui.theme.DarkYellow
-import com.example.legodataapp.ui.theme.fontFamily
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 @Composable
 fun ProductScreen(
@@ -45,15 +46,19 @@ fun ProductScreen(
     isAuthenticated: Boolean,
     onAddWishlist: () -> Unit,
     onAddMyLegoList: () -> Unit,
-    context: Context
+    context: Context,
+    navController: NavHostController
 ) {
+    val legoDB = Firebase.firestore
+    val (wishlistItems, setWishlistItems) = remember { mutableStateOf<List<LegoSet>>(emptyList()) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Cream),
         contentAlignment = Alignment.Center
     ) {
-        Card (
+        Card(
             modifier = Modifier.padding(25.dp),
             border = BorderStroke(2.dp, DarkYellow),
             colors = CardDefaults.cardColors(containerColor = Cream)
@@ -71,7 +76,6 @@ fun ProductScreen(
                     text = legoSet.name,
                     color = Brown,
                     fontSize = 25.sp,
-                    fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
@@ -79,49 +83,54 @@ fun ProductScreen(
                 Text("Pieces: ${legoSet.num_parts}", color = Brown, fontSize = 20.sp)
                 Text(text = "Theme: ${legoSet.theme_id}", color = Brown, fontSize = 20.sp)
                 Text(text = "Year: ${legoSet.year}", color = Brown, fontSize = 20.sp)
-                if(isAuthenticated) {
-                    Row(modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
+                if (isAuthenticated) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                         // Add to Wishlist Button
                         Button(
                             onClick = {
-                                onAddWishlist()
-                                showToast(context, "Added to Wishlist!")
+                                val set = hashMapOf(
+                                    "Name" to legoSet.name,
+                                    "Set Number" to legoSet.set_num,
+                                    "Set Image" to legoSet.set_img_url
+                                )
+                                legoDB.collection("Wishlist")
+                                    .add(set)
+                                    .addOnSuccessListener { documentReference ->
+                                        onAddWishlist()
+                                        showToast(context, "Added to Wishlist!")
+                                    }
                             },
-                            Modifier
-                                .height(55.dp)
-                                .padding(5.dp)) {
-                            Image(painter = painterResource(
-                                id = R.drawable.heart_icon),
+                            Modifier.height(55.dp).padding(5.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.heart_icon),
                                 contentDescription = "Wishlist icon",
                                 colorFilter = ColorFilter.tint(color = DarkText)
                             )
-//                            Text(
-//                                text = "Add to Wishlist",
-//                                fontSize = 15.sp,
-//                                textAlign = TextAlign.Center
-//                            )
                         }
+
                         // Add to My LEGO Button
                         Button(
                             onClick = {
-                                onAddMyLegoList()
-                                showToast(context, "Added to My LEGO!")
+                                val set = hashMapOf(
+                                    "Name" to legoSet.name,
+                                    "Set Number" to legoSet.set_num,
+                                    "Set Image" to legoSet.set_img_url
+                                )
+                                legoDB.collection("My Lego")
+                                    .add(set)
+                                    .addOnSuccessListener { documentReference ->
+                                        onAddMyLegoList()
+                                        showToast(context, "Added to My LEGO!")
+                                    }
                             },
-                            Modifier
-                                .height(55.dp)
-                                .padding(5.dp)) {
-                            Image(painter = painterResource(
-                                id = R.drawable.favoritefolder_icon),
+                            Modifier.height(55.dp).padding(5.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.favoritefolder_icon),
                                 contentDescription = "My Lego icon",
                                 colorFilter = ColorFilter.tint(color = DarkText)
                             )
-//                            Text(
-//                                text = "Add to My LEGO",
-//                                fontSize = 15.sp,
-//                                textAlign = TextAlign.Center
-//                            )
                         }
                     }
                 }
@@ -130,6 +139,7 @@ fun ProductScreen(
     }
 }
 
+
 fun showToast(context: Context, message: String) {
-    Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
