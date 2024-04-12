@@ -26,9 +26,10 @@ import com.example.legodataapp.ui.theme.Cream
 import com.example.legodataapp.ui.theme.DarkYellow
 import com.example.legodataapp.ui.theme.fontFamily
 import com.example.legodataapp.R
+import com.example.legodataapp.data.LegoSet
 
 @Composable
-fun Product(navController: NavController, hasRating: Boolean) {
+fun Product(navController: NavController, hasRating: Boolean, legoSet: LegoSet) {
     Column {
         Card (
             modifier = Modifier

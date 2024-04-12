@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "695595175598",
+    "project_id": "legodata-347cb",
+    "storage_bucket": "legodata-347cb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:695595175598:android:afe2a22c60ca29dd3c673f",
+        "android_client_info": {
+          "package_name": "com.example.legodataapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFg0HelF8Nv-OAVQehv-6lhatp4A0YEIA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

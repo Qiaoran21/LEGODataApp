@@ -151,7 +151,7 @@ fun MainScreen(
         NavItem.Product.route -> NavItem.Product.title
         NavItem.Rating.route -> NavItem.Rating.title
         "${NavItem.QrCode.route}/{result}" -> NavItem.QrCode.title
-        else -> "Error!"
+        else -> ""
     }
     var mediaPlayer: MediaPlayer? = null
     val isSoundEffects = loadSettings.loadSoundEffectsState(context)
@@ -223,7 +223,8 @@ fun MainScreen(
                     {
                         Icon(
                             painter = painterResource(id = R.drawable.qr_scan),
-                            contentDescription = "QR scan"
+                            contentDescription = "QR scan",
+                            tint = colorResource(id = textColor)
                         )
                     }
                 }
@@ -269,12 +270,15 @@ fun MainScreen(
         ) {
             NavigationScreens(
                 navController = navController,
-                viewModel,
-                setViewModel,
-            ) { isDarkMode ->
-                updateContainerColor(isDarkMode)
-                updateTextColor(isDarkMode)
-            }
+                viewModel = viewModel,
+                setViewModel = setViewModel,
+                updateContainerColor = { isDarkMode ->
+                    updateContainerColor(isDarkMode)
+                    updateTextColor(isDarkMode)
+                },
+                context = context
+            )
+
 
             LaunchedEffect(navController.currentBackStackEntry?.destination?.route) {
                 if (!appJustStarted) {

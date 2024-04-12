@@ -1,6 +1,6 @@
 package com.example.legodataapp
 
-import android.util.Log
+import android.content.Context
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -12,11 +12,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navArgument
 import com.example.legodataapp.data.LegoSet
 import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.model.SetViewModel
@@ -28,6 +26,7 @@ import com.example.legodataapp.screens.ProductScreen
 import com.example.legodataapp.screens.RatingScreen
 import com.example.legodataapp.screens.WishListScreen
 import com.example.legodataapp.screens.qrResultScreen
+import com.example.legodataapp.screens.showToast
 import java.net.URLDecoder
 
 @Composable
@@ -58,21 +57,25 @@ fun NavigationScreens(
     navController: NavHostController,
     viewModel: AuthViewModel,
     setViewModel: SetViewModel,
-    updateContainerColor: (Boolean) -> Unit
+    updateContainerColor: (Boolean) -> Unit,
+    context: Context
 ) {
     NavHost(navController, startDestination = NavItem.Home.route) {
         composable(NavItem.WishList.route) {
             WishListScreen(
                 navController = navController,
-                hasRating = true
-            )
+                hasRating = true,
+                wishlistItems = setViewModel.wishlistItems
+            ) { item -> setViewModel.removeFromWishlist(item) }
         }
         composable(NavItem.MyLEGO.route) {
             MyLEGOScreen(
                 navController = navController,
-                hasRating = false
-            )
+                hasRating = false,
+                myLegoListItems = setViewModel.myLegoListItems
+            ) { item -> setViewModel.removeFromMyLegolist(item) }
         }
+
         composable(NavItem.Home.route) {
             HomeScreen(
                 setViewModel = setViewModel,
@@ -109,12 +112,22 @@ fun NavigationScreens(
             val legoSet = LegoSet(lastMod, setName, numParts.toInt(), setImgUrl, setNum, setUrl, themeId.toInt(), year.toInt())
             val isAuthenticated = backStackEntry.arguments?.getString("isAuth") ?: "false"
 
-            ProductScreen(legoSet, isAuthenticated.toBoolean())
+            ProductScreen(
+                legoSet = legoSet,
+                isAuthenticated = isAuthenticated.toBoolean(),
+                onAddWishlist = {
+                    setViewModel.addToWishlist(legoSet)
+                    showToast(context = context, message = "Added to Wishlist")
+                },
+                onAddMyLegoList = {
+                    setViewModel.addToMyLegolist(legoSet)
+                    showToast(context = context, message = "Added to My LEGO")
+                },
+                context = context
+            )
         }
     }
 }
-
-
 
 @Composable
 fun getCurrentRoute(navController: NavHostController): String? {
