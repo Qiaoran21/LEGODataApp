@@ -1,5 +1,6 @@
 package com.example.legodataapp
 
+import android.util.Log
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -11,9 +12,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
+import com.example.legodataapp.data.LegoSet
 import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.model.SetViewModel
 import com.example.legodataapp.screens.AccountScreen
@@ -24,6 +28,7 @@ import com.example.legodataapp.screens.ProductScreen
 import com.example.legodataapp.screens.RatingScreen
 import com.example.legodataapp.screens.WishListScreen
 import com.example.legodataapp.screens.qrResultScreen
+import java.net.URLDecoder
 
 @Composable
 fun BottomNavBar(
@@ -56,22 +61,58 @@ fun NavigationScreens(
     updateContainerColor: (Boolean) -> Unit
 ) {
     NavHost(navController, startDestination = NavItem.Home.route) {
-        composable(NavItem.WishList.route) { WishListScreen(navController = navController, hasRating = true) }
-        composable(NavItem.MyLEGO.route) { MyLEGOScreen(navController = navController, hasRating = false) }
-        composable(NavItem.Home.route) {
-            HomeScreen(setViewModel = setViewModel, authViewModel = viewModel, navController = navController)
+        composable(NavItem.WishList.route) {
+            WishListScreen(
+                navController = navController,
+                hasRating = true
+            )
         }
-        composable(NavItem.Account.route) { AccountScreen(navController = navController, viewModel = viewModel, updateContainerColor = updateContainerColor) }
+        composable(NavItem.MyLEGO.route) {
+            MyLEGOScreen(
+                navController = navController,
+                hasRating = false
+            )
+        }
+        composable(NavItem.Home.route) {
+            HomeScreen(
+                setViewModel = setViewModel,
+                authViewModel = viewModel,
+                navController = navController
+            )
+        }
+        composable(NavItem.Account.route) {
+            AccountScreen(
+                navController = navController,
+                viewModel = viewModel,
+                updateContainerColor = updateContainerColor
+            )
+        }
         composable(NavItem.Help.route) { HelpScreen() }
         composable(NavItem.Rating.route) { RatingScreen() }
         composable(route = "${NavItem.QrCode.route}/{result}") { backStackEntry ->
             val result = backStackEntry.arguments?.getString("result") ?: ""
             qrResultScreen(result)
         }
-        composable(NavItem.Product.route) { ProductScreen() }
+        //composable(NavItem.Product.route) { ProductScreen() }
+        composable(
+            route = NavItem.Product.route + "/{last_modified_dt}/{name}/{num_parts}/{set_img_url}/{set_num}/{set_url}/{theme_id}/{year}/{isAuth}"
+        ) { backStackEntry ->
+            val lastMod = backStackEntry.arguments?.getString("last_modified_dt") ?: ""
+            val setName = backStackEntry.arguments?.getString("name") ?: ""
+            val numParts = backStackEntry.arguments?.getString("num_parts") ?: "0"
+            val setImgUrl = URLDecoder.decode(backStackEntry.arguments?.getString("set_img_url") ?: "", "UTF-8")
+            val setNum = backStackEntry.arguments?.getString("set_num") ?: "0"
+            val setUrl = URLDecoder.decode(backStackEntry.arguments?.getString("set_url") ?: "", "UTF-8")
+            val themeId = backStackEntry.arguments?.getString("theme_id") ?: "0"
+            val year = backStackEntry.arguments?.getString("year") ?: "0"
+
+            val legoSet = LegoSet(lastMod, setName, numParts.toInt(), setImgUrl, setNum, setUrl, themeId.toInt(), year.toInt())
+            val isAuthenticated = backStackEntry.arguments?.getString("isAuth") ?: "false"
+
+            ProductScreen(legoSet, isAuthenticated.toBoolean())
         }
     }
-
+}
 
 
 

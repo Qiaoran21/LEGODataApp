@@ -50,6 +50,8 @@ import com.example.legodataapp.data.LegoSet
 import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.model.SetViewModel
 import com.example.legodataapp.ui.theme.LightBrown
+import com.google.gson.Gson
+import java.net.URLEncoder
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
@@ -101,7 +103,20 @@ fun HomeScreen(
             }
             items(filteredSets ?: emptyList()) { set ->
                 SetCard(set, isAuthenticated) { selectedLegoSet ->
-                    navController.navigate(NavItem.Product.route)
+                    //navController.navigate(NavItem.Product.route)
+                    val encodedImgUrl = URLEncoder.encode(selectedLegoSet.set_img_url, "UTF-8")
+                    val encodedSetUrl = URLEncoder.encode(selectedLegoSet.set_url, "UTF-8")
+                    navController.navigate(NavItem.Product.route +
+                            "/${selectedLegoSet.last_modified_dt}" +
+                            "/${selectedLegoSet.name}"+
+                            "/${selectedLegoSet.num_parts}"+
+                            "/${encodedImgUrl}"+
+                            "/${selectedLegoSet.set_num}"+
+                            "/${encodedSetUrl}"+
+                            "/${selectedLegoSet.theme_id}"+
+                            "/${selectedLegoSet.year}"+
+                            "/${isAuthenticated}"
+                    )
                 }
             }
 
@@ -118,7 +133,9 @@ fun SetCard(
     Card (
         modifier = Modifier
             .padding(20.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth().clickable {
+                onLegoSetClicked(legoSet)
+            },
         border = BorderStroke(2.dp, DarkYellow),
         colors = CardDefaults.cardColors(containerColor = Cream)
     ) {
@@ -134,15 +151,13 @@ fun SetCard(
                 color = Brown,
                 fontSize = 20.sp,
                 fontFamily = fontFamily,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable {
-                    onLegoSetClicked(legoSet)
-                })
-            Spacer(modifier = Modifier.padding(5.dp))
-            Text("Pieces: ${legoSet.num_parts}")
-            Text("Set Number: ${legoSet.set_num}")
-            Text("Theme: ${legoSet.theme_id}")
-            Text("Year: ${legoSet.year}")
+                fontWeight = FontWeight.Bold
+            )
+            //Spacer(modifier = Modifier.padding(5.dp))
+            //Text("Pieces: ${legoSet.num_parts}")
+            //Text("Set Number: ${legoSet.set_num}")
+            //Text("Theme: ${legoSet.theme_id}")
+            //Text("Year: ${legoSet.year}")
             if(isAuthenticated) {
                 Row {
                     // Add to My LEGO Button
