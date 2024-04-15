@@ -27,6 +27,8 @@ class SetViewModel : ViewModel() {
 
     //Database
     private val firestore = FirebaseFirestore.getInstance()
+    val userModel = AuthViewModel()
+    var userId = userModel.user.id
 
     //Wishlist
     init {
@@ -37,13 +39,20 @@ class SetViewModel : ViewModel() {
     val wishlistSets: LiveData<List<LegoSet>> get() = _wishlistSets
 
     fun addToWishlist(legoSet: LegoSet) {
-        val currentList = _wishlistSets.value ?: emptyList()
-        _wishlistSets.value = currentList + legoSet
+        val wishlistCollection = firestore.collection("users")
+            .document(userId)
+            .collection("Wishlist")
+        wishlistCollection.add(legoSet)
+        // val currentList = _wishlistSets.value ?: emptyList()
+        // _wishlistSets.value = currentList + legoSet
     }
 
     fun removeFromWishlist(legoSet: LegoSet) {
-        val wishListCollection = firestore.collection("Wishlist")
-        wishListCollection.whereEqualTo("Set Number", legoSet.set_num)
+        val wishlistCollection = firestore.collection("users")
+            .document(userId)
+            .collection("Wishlist")
+
+        wishlistCollection.whereEqualTo("Set Number", legoSet.set_num)
             .get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
@@ -57,7 +66,14 @@ class SetViewModel : ViewModel() {
     }
 
     fun fetchWishlistItems() {
-        firestore.collection("Wishlist").get()
+        //val wishlistCollection = firestore.collection("users")
+            //.document(userId)
+            //.collection("Wishlist")
+
+        // CHANGE BACK
+        val wishlistCollection = firestore.collection("Wishlist")
+
+        wishlistCollection.get()
             .addOnSuccessListener { documents ->
                 val items = mutableListOf<LegoSet>()
                 for (document in documents) {

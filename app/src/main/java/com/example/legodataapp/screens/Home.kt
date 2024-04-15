@@ -96,17 +96,23 @@ fun HomeScreen(
                 )
             }
             items(filteredSets ?: emptyList()) { set ->
-                SetCard(set, isAuthenticated) { selectedLegoSet ->
+                SetCard(set) { selectedLegoSet ->
                     //navController.navigate(NavItem.Product.route)
-                    val encodedImgUrl = URLEncoder.encode(selectedLegoSet.set_img_url, "UTF-8")
-                    val encodedSetUrl = URLEncoder.encode(selectedLegoSet.set_url, "UTF-8")
+                    var encodedImgUrl = URLEncoder.encode(selectedLegoSet.set_img_url, "UTF-8")
+                    var encodedSetUrl = URLEncoder.encode(selectedLegoSet.set_url, "UTF-8")
+                    if(encodedSetUrl==""){
+                        encodedSetUrl = "None"
+                    }
+                    if(encodedImgUrl==""){
+                        encodedImgUrl = "None"
+                    }
                     navController.navigate(NavItem.Product.route +
                             "/${selectedLegoSet.last_modified_dt}" +
                             "/${selectedLegoSet.name}"+
                             "/${selectedLegoSet.num_parts}"+
-                            "/${encodedImgUrl}"+
+                            "/${encodedImgUrl ?: ""}"+
                             "/${selectedLegoSet.set_num}"+
-                            "/${encodedSetUrl}"+
+                            "/${encodedSetUrl ?: ""}"+
                             "/${selectedLegoSet.theme_id}"+
                             "/${selectedLegoSet.year}"+
                             "/${isAuthenticated}"
@@ -120,7 +126,6 @@ fun HomeScreen(
 @Composable
 fun SetCard(
     legoSet: LegoSet,
-    isAuthenticated: Boolean,
     onLegoSetClicked: (LegoSet) -> Unit
 ) {
     Card (
@@ -185,7 +190,7 @@ fun AppSearchBar(
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(70.dp),
+            .padding(top = 70.dp, start = 50.dp, end = 50.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Cream,
             unfocusedContainerColor = Cream,

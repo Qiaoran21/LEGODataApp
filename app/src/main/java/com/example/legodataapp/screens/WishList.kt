@@ -1,8 +1,10 @@
 package com.example.legodataapp.screens
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,41 +26,80 @@ import com.example.legodataapp.data.LegoSet
 import com.example.legodataapp.ui.theme.Cream
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.legodataapp.NavItem
+import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.model.SetViewModel
 import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.DarkYellow
 import com.example.legodataapp.ui.theme.fontFamily
 import com.google.firebase.firestore.FirebaseFirestore
+import java.net.URLEncoder
 
 @Composable
 fun WishListScreen(
     navController: NavController,
     hasRating: Boolean,
     wishlistItems: LiveData<List<LegoSet>>,
-    setViewModel: SetViewModel
+    setViewModel: SetViewModel,
+    authViewModel: AuthViewModel
 ) {
     val items by wishlistItems.observeAsState(initial = emptyList())
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Cream)
+    var isAuthenticated by remember { mutableStateOf(authViewModel.userIsAuthenticated) }
+
+    Column (modifier = Modifier.background(Cream)
+                .fillMaxSize()
+                .padding(top = 60.dp, bottom = 75.dp)
     ) {
-        if (items.isNotEmpty()) {
-            items.forEach { item ->
-                WishListItem(navController, hasRating, item, setViewModel)
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Cream)
+        ) {
+            if (items.isNotEmpty()) {
+                items(items) { item ->
+                    WishListItem(navController, hasRating, item, setViewModel){ selectedLegoSet ->
+                        //navController.navigate(NavItem.Product.route)
+                        var encodedImgUrl = URLEncoder.encode(selectedLegoSet.set_img_url, "UTF-8")
+                        var encodedSetUrl = URLEncoder.encode(selectedLegoSet.set_url, "UTF-8")
+                        if(encodedSetUrl==""){
+                            encodedSetUrl = "None"
+                        }
+                        if(encodedImgUrl==""){
+                            encodedImgUrl = "None"
+                        }
+                        navController.navigate(
+                            NavItem.Product.route +
+                                "/${"2022-01-01"}" +
+                                "/${selectedLegoSet.name}"+
+                                "/${selectedLegoSet.num_parts}"+
+                                "/${encodedImgUrl}"+
+                                "/${selectedLegoSet.set_num}"+
+                                "/${encodedSetUrl}"+
+                                "/${selectedLegoSet.theme_id}"+
+                                "/${selectedLegoSet.year}"+
+                                "/${isAuthenticated}"
+                        )
+                    }
+                }
+            } else {
+                item {
+                    Text("Your wishlist is empty!")
+                }
             }
-        } else {
-            Text("Your wishlist is empty!")
         }
     }
 }
@@ -66,7 +109,8 @@ fun WishListItem(
     navController: NavController,
     hasRating: Boolean,
     legoSet: LegoSet,
-    setViewModel: SetViewModel
+    setViewModel: SetViewModel,
+    onLegoSetClicked: (LegoSet) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -78,7 +122,9 @@ fun WishListItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
+                .padding(10.dp).clickable {
+                    onLegoSetClicked(legoSet)
+                }
         ) {
             Row {
                 AsyncImage(

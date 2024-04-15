@@ -2,6 +2,7 @@ package com.example.legodataapp.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,31 +34,68 @@ import com.example.legodataapp.ui.theme.Cream
 import com.example.legodataapp.ui.theme.DarkYellow
 import com.example.legodataapp.ui.theme.fontFamily
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
+import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.model.SetViewModel
+import java.net.URLEncoder
 
 @Composable
 fun MyLEGOScreen(
     navController: NavController,
     hasRating: Boolean,
     myLegoListItems: LiveData<List<LegoSet>>,
-    setViewModel: SetViewModel
+    setViewModel: SetViewModel,
+    authViewModel: AuthViewModel
 ) {
     val items by myLegoListItems.observeAsState(initial = emptyList())
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Cream)
+    var isAuthenticated by remember { mutableStateOf(authViewModel.userIsAuthenticated) }
+
+    Column (modifier = Modifier.background(Cream)
+        .fillMaxSize()
+        .padding(top = 60.dp, bottom = 75.dp)
     ) {
-        if (items.isNotEmpty()) {
-            items.forEach { item ->
-                MyLegoItem(navController, hasRating, item, setViewModel)
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Cream)
+        ) {
+            if (items.isNotEmpty()) {
+                items(items) { item ->
+                    MyLegoItem(navController, hasRating, item, setViewModel){ selectedLegoSet ->
+                        //navController.navigate(NavItem.Product.route)
+                        var encodedImgUrl = URLEncoder.encode(selectedLegoSet.set_img_url, "UTF-8")
+                        var encodedSetUrl = URLEncoder.encode(selectedLegoSet.set_url, "UTF-8")
+                        if(encodedSetUrl==""){
+                            encodedSetUrl = "None"
+                        }
+                        if(encodedImgUrl==""){
+                            encodedImgUrl = "None"
+                        }
+                        navController.navigate(
+                            NavItem.Product.route +
+                                    "/${"2022-01-01"}" +
+                                    "/${selectedLegoSet.name}"+
+                                    "/${selectedLegoSet.num_parts}"+
+                                    "/${encodedImgUrl}"+
+                                    "/${selectedLegoSet.set_num}"+
+                                    "/${encodedSetUrl}"+
+                                    "/${selectedLegoSet.theme_id}"+
+                                    "/${selectedLegoSet.year}"+
+                                    "/${isAuthenticated}"
+                        )
+                    }
+                }
+            } else {
+                item {
+                    Text("Your Lego list is empty!")
+                }
             }
-        } else {
-            Text("Your Lego list is empty")
         }
     }
 }
@@ -65,7 +105,8 @@ fun MyLegoItem(
     navController: NavController,
     hasRating: Boolean,
     legoSet: LegoSet,
-    setViewModel: SetViewModel
+    setViewModel: SetViewModel,
+    onLegoSetClicked: (LegoSet) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -77,7 +118,9 @@ fun MyLegoItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
+                .padding(10.dp).clickable {
+                    onLegoSetClicked(legoSet)
+                },
         ) {
             Row {
                 AsyncImage(

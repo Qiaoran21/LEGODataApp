@@ -66,7 +66,8 @@ fun NavigationScreens(
                 navController = navController,
                 hasRating = true,
                 wishlistItems = setViewModel.wishlistSets,
-                setViewModel = setViewModel
+                setViewModel = setViewModel,
+                authViewModel = viewModel
             )
         }
 
@@ -75,7 +76,8 @@ fun NavigationScreens(
                 navController = navController,
                 hasRating = false,
                 myLegoListItems = setViewModel.myLegoListItems,
-                setViewModel = setViewModel
+                setViewModel = setViewModel,
+                authViewModel = viewModel
             )
         }
 
@@ -120,11 +122,9 @@ fun NavigationScreens(
                 isAuthenticated = isAuthenticated.toBoolean(),
                 onAddWishlist = {
                     setViewModel.addToWishlist(legoSet)
-                    showToast(context = context, message = "Added to Wishlist")
                 },
                 onAddMyLegoList = {
                     setViewModel.addToMyLegolist(legoSet)
-                    showToast(context = context, message = "Added to My LEGO")
                 },
                 context = context,
                 navController = navController
