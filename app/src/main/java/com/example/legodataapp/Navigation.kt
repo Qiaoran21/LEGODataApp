@@ -121,6 +121,7 @@ fun NavigationScreens(
             ProductScreen(
                 legoSet = legoSet,
                 authViewModel = viewModel,
+                setViewModel = setViewModel,
                 isAuthenticated = isAuthenticated.toBoolean(),
                 onAddWishlist = {
                     setViewModel.addToWishlist(legoSet, "1")

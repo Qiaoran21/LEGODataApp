@@ -44,6 +44,7 @@ import coil.compose.AsyncImage
 import com.example.legodataapp.R
 import com.example.legodataapp.data.LegoSet
 import com.example.legodataapp.model.AuthViewModel
+import com.example.legodataapp.model.SetViewModel
 import com.example.legodataapp.model.User
 import com.example.legodataapp.network.RetrofitInstanceLegoTheme
 import com.example.legodataapp.ui.theme.Brown
@@ -58,6 +59,7 @@ import com.google.firebase.firestore.firestore
 fun ProductScreen(
     legoSet: LegoSet,
     authViewModel: AuthViewModel,
+    setViewModel: SetViewModel,
     isAuthenticated: Boolean,
     onAddWishlist: () -> Unit,
     onAddMyLegoList: () -> Unit,
@@ -68,7 +70,19 @@ fun ProductScreen(
     val (wishlistItems, setWishlistItems) = remember { mutableStateOf<List<LegoSet>>(emptyList()) }
     var themeName by rememberSaveable { mutableStateOf("") }
 
-    val user by remember { mutableStateOf(authViewModel.user.value?.id) }
+    val wishlist by rememberSaveable { mutableStateOf(setViewModel.wishlistSets.value ?: emptyList()) }
+    val legolist by rememberSaveable { mutableStateOf(setViewModel.myLegoListItems.value ?: emptyList()) }
+
+    var isInWishlist by remember { mutableStateOf(wishlist.any { it.set_num == legoSet.set_num }) }
+    var isInLegolist by remember { mutableStateOf(legolist.any { it.set_num == legoSet.set_num }) }
+
+    fun updateIsInLegolist(){
+        isInLegolist = !isInLegolist
+    }
+
+    fun updateIsInWishlist(){
+        isInWishlist = !isInWishlist
+    }
 
     LaunchedEffect(Unit) {
         try {
@@ -142,64 +156,65 @@ fun ProductScreen(
                                     horizontalArrangement = Arrangement.End
                                 ) {
                                     // Add to Wishlist Button
-                                    Button(
-                                        onClick = {
-                                            val set = hashMapOf(
-                                                "Name" to legoSet.name,
-                                                "Set Number" to legoSet.set_num,
-                                                "Set Image" to legoSet.set_img_url
+                                    if(!isInWishlist) {
+                                        Button(
+                                            onClick = {
+                                                val set = hashMapOf(
+                                                    "Name" to legoSet.name,
+                                                    "Set Number" to legoSet.set_num,
+                                                    "Set Image" to legoSet.set_img_url
+                                                )
+                                                val wishlistCollection = legoDB.collection("Users")
+                                                    .document(authViewModel.user.value?.id.toString())
+                                                    .collection("Wishlist")
+                                                wishlistCollection.add(legoSet)
+                                                    .addOnSuccessListener { documentReference ->
+                                                        onAddWishlist()
+                                                        updateIsInWishlist()
+                                                        showToast(context, "Added to Wishlist!")
+                                                    }
+                                            },
+                                            Modifier
+                                                .height(55.dp)
+                                                .padding(5.dp)
+                                        ) {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.heart_icon),
+                                                contentDescription = "Wishlist icon",
+                                                colorFilter = ColorFilter.tint(color = DarkText)
                                             )
-                                            val wishlistCollection = legoDB.collection("Users")
-                                                .document(authViewModel.user.value?.id.toString())
-                                                .collection("Wishlist")
-                                            wishlistCollection.add(legoSet).addOnSuccessListener { documentReference ->
-                                                onAddWishlist()
-                                                showToast(context, "Added to Wishlist!")
-                                            }
-                                            //
-                                            //legoDB.collection("Wishlist")
-                                               // .add(set)
-                                               // .addOnSuccessListener { documentReference ->
-                                               //     onAddWishlist()
-                                               //     showToast(context, "Added to Wishlist!")
-                                               // }
-                                        },
-                                        Modifier
-                                            .height(55.dp)
-                                            .padding(5.dp)
-                                    ) {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.heart_icon),
-                                            contentDescription = "Wishlist icon",
-                                            colorFilter = ColorFilter.tint(color = DarkText)
-                                        )
+                                        }
                                     }
 
                                     // Add to My LEGO Button
-                                    Button(
-                                        onClick = {
-                                            val set = hashMapOf(
-                                                "Name" to legoSet.name,
-                                                "Set Number" to legoSet.set_num,
-                                                "Set Image" to legoSet.set_img_url
+                                    if(!isInLegolist) {
+                                        Button(
+                                            onClick = {
+                                                val set = hashMapOf(
+                                                    "Name" to legoSet.name,
+                                                    "Set Number" to legoSet.set_num,
+                                                    "Set Image" to legoSet.set_img_url
+                                                )
+                                                val myLegoCollection = legoDB.collection("Users")
+                                                    .document(authViewModel.user.value?.id.toString())
+                                                    .collection("My Lego")
+                                                myLegoCollection.add(legoSet)
+                                                    .addOnSuccessListener { documentReference ->
+                                                        onAddMyLegoList()
+                                                        updateIsInLegolist()
+                                                        showToast(context, "Added to My LEGO!")
+                                                    }
+                                            },
+                                            Modifier
+                                                .height(55.dp)
+                                                .padding(5.dp)
+                                        ) {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.favoritefolder_icon),
+                                                contentDescription = "My Lego icon",
+                                                colorFilter = ColorFilter.tint(color = DarkText)
                                             )
-                                            val myLegoCollection = legoDB.collection("Users")
-                                                .document(authViewModel.user.value?.id.toString())
-                                                .collection("My Lego")
-                                            myLegoCollection.add(legoSet).addOnSuccessListener { documentReference ->
-                                                onAddMyLegoList()
-                                                showToast(context, "Added to My LEGO!")
-                                            }
-                                        },
-                                        Modifier
-                                            .height(55.dp)
-                                            .padding(5.dp)
-                                    ) {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.favoritefolder_icon),
-                                            contentDescription = "My Lego icon",
-                                            colorFilter = ColorFilter.tint(color = DarkText)
-                                        )
+                                        }
                                     }
                                 }
                             }
