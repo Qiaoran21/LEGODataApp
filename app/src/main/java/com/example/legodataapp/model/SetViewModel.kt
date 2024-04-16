@@ -37,7 +37,9 @@ class SetViewModel : ViewModel() {
 
     fun updateUserId(userId: String){
         _wishlistSets.value = emptyList()
+        _myLegoListItems.value = emptyList()
         fetchWishlistItems(userId)
+        fetchMyLegoItems(userId)
     }
 
     fun fetchSets() {
@@ -48,10 +50,6 @@ class SetViewModel : ViewModel() {
     }
 
     fun addToWishlist(legoSet: LegoSet, userId: String) {
-        //val wishlistCollection = firestore.collection("Users")
-        //    .document(userId)
-        //    .collection("Wishlist")
-        //wishlistCollection.add(legoSet)
         val currentList = _wishlistSets.value ?: emptyList()
         _wishlistSets.value = currentList + legoSet
     }
@@ -114,7 +112,11 @@ class SetViewModel : ViewModel() {
 
     //MyLEGO
     init {
-        fetchMyLegoItems()
+        authViewModel.user.observeForever { user ->
+            user?.let {
+                fetchMyLegoItems(user.id)
+            }
+        }
     }
     private val _myLegoListItems = MutableLiveData<List<LegoSet>>()
     val myLegoListItems: LiveData<List<LegoSet>> get() = _myLegoListItems
@@ -124,35 +126,58 @@ class SetViewModel : ViewModel() {
         _myLegoListItems.value = currentList + legoSet
     }
 
-    fun removeFromMyLegolist(legoSet: LegoSet) {
-        val wishListCollection = firestore.collection("My Lego")
-        wishListCollection.whereEqualTo("Set Number", legoSet.set_num)
+    fun removeFromMyLegolist(legoSet: LegoSet, userId: String) {
+        val wishlistCollection = firestore.collection("Users")
+            .document(userId)
+            .collection("My Lego")
+        wishlistCollection.whereEqualTo("set_num", legoSet.set_num)
             .get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     document.reference.delete()
                         .addOnSuccessListener {
-                            val currentList = _wishlistSets.value ?: emptyList()
-                            _wishlistSets.value = currentList - legoSet
+                            val currentList = _myLegoListItems.value ?: emptyList()
+                            _myLegoListItems.value = currentList - legoSet
                         }
                 }
             }
     }
 
-    fun fetchMyLegoItems() {
-        firestore.collection("My Lego").get()
-            .addOnSuccessListener { documents ->
-                val items = mutableListOf<LegoSet>()
-                for (document in documents) {
-                    val setName = document.getString("Name") ?: ""
-                    val setImgUrl = document.getString("Set Image") ?: ""
-                    val setNum = document.getString("Set Number") ?: ""
+    fun fetchMyLegoItems(userId: String) {
+        try {
+            val wishlistCollection = firestore.collection("Users")
+                .document(userId)
+                .collection("My Lego")
 
-                    val legoSet = LegoSet(name = setName, set_img_url = setImgUrl, set_num = setNum)
+            wishlistCollection.get()
+                .addOnSuccessListener { documents ->
+                    val items = mutableListOf<LegoSet>()
+                    for (document in documents) {
+                        val setName = document.getString("name") ?: ""
+                        val setImgUrl = document.getString("set_img_url") ?: ""
+                        val setNum = document.getString("set_num") ?: ""
+                        val year = document.getLong("year")?.toInt() ?: 0
+                        val last_modified_dt = document.getString("last_modified_dt") ?: ""
+                        val num_parts = document.getLong("num_parts")?.toInt() ?: 0
+                        val set_url = document.getString("set_url") ?: ""
+                        val theme_id = document.getLong("theme_id")?.toInt() ?: 0
 
-                    items.add(legoSet)
+                        val legoSet = LegoSet(
+                            last_modified_dt = last_modified_dt,
+                            name = setName,
+                            num_parts = num_parts,
+                            set_img_url = setImgUrl,
+                            set_num = setNum,
+                            set_url = set_url,
+                            theme_id = theme_id,
+                            year = year)
+
+                        items.add(legoSet)
+                    }
+                    _myLegoListItems.value = items
                 }
-                _myLegoListItems.value = items
-            }
+        }catch (e: Exception){
+
+        }
     }
 }

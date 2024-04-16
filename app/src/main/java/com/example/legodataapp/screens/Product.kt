@@ -183,12 +183,13 @@ fun ProductScreen(
                                                 "Set Number" to legoSet.set_num,
                                                 "Set Image" to legoSet.set_img_url
                                             )
-                                            legoDB.collection("My Lego")
-                                                .add(set)
-                                                .addOnSuccessListener { documentReference ->
-                                                    onAddMyLegoList()
-                                                    showToast(context, "Added to My LEGO!")
-                                                }
+                                            val myLegoCollection = legoDB.collection("Users")
+                                                .document(authViewModel.user.value?.id.toString())
+                                                .collection("My Lego")
+                                            myLegoCollection.add(legoSet).addOnSuccessListener { documentReference ->
+                                                onAddMyLegoList()
+                                                showToast(context, "Added to My LEGO!")
+                                            }
                                         },
                                         Modifier
                                             .height(55.dp)

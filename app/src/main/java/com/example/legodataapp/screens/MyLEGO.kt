@@ -67,7 +67,7 @@ fun MyLEGOScreen(
         ) {
             if (items.isNotEmpty()) {
                 items(items) { item ->
-                    MyLegoItem(navController, hasRating, item, setViewModel){ selectedLegoSet ->
+                    MyLegoItem(navController, hasRating, item, setViewModel, authViewModel){ selectedLegoSet ->
                         //navController.navigate(NavItem.Product.route)
                         var encodedImgUrl = URLEncoder.encode(selectedLegoSet.set_img_url, "UTF-8")
                         var encodedSetUrl = URLEncoder.encode(selectedLegoSet.set_url, "UTF-8")
@@ -106,6 +106,7 @@ fun MyLegoItem(
     hasRating: Boolean,
     legoSet: LegoSet,
     setViewModel: SetViewModel,
+    authViewModel: AuthViewModel,
     onLegoSetClicked: (LegoSet) -> Unit
 ) {
     Card(
@@ -160,7 +161,7 @@ fun MyLegoItem(
                 val context = LocalContext.current
                 Button(
                     onClick = {
-                        setViewModel.removeFromMyLegolist(legoSet)
+                        setViewModel.removeFromMyLegolist(legoSet, authViewModel.user.value?.id.toString())
                         showToast(context, "Item removed from My LEGO!")
                     },
                     modifier = Modifier.padding(10.dp)

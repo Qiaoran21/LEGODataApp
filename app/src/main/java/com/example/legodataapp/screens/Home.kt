@@ -63,7 +63,7 @@ fun HomeScreen(
     }
 
     LaunchedEffect(Unit) {
-        setViewModel.fetchSets()
+        //setViewModel.fetchSets()
     }
 
     val filteredSets = sets?.legoSetList?.filter {
