@@ -71,7 +71,7 @@ fun WishListScreen(
         ) {
             if (items.isNotEmpty()) {
                 items(items) { item ->
-                    WishListItem(navController, hasRating, item, setViewModel){ selectedLegoSet ->
+                    WishListItem(navController, hasRating, item, setViewModel, authViewModel){ selectedLegoSet ->
                         //navController.navigate(NavItem.Product.route)
                         var encodedImgUrl = URLEncoder.encode(selectedLegoSet.set_img_url, "UTF-8")
                         var encodedSetUrl = URLEncoder.encode(selectedLegoSet.set_url, "UTF-8")
@@ -110,6 +110,7 @@ fun WishListItem(
     hasRating: Boolean,
     legoSet: LegoSet,
     setViewModel: SetViewModel,
+    authViewModel: AuthViewModel,
     onLegoSetClicked: (LegoSet) -> Unit
 ) {
     Card(
@@ -153,7 +154,7 @@ fun WishListItem(
             ) {
                 Button(
                     onClick = {
-                        setViewModel.removeFromWishlist(legoSet)
+                        setViewModel.removeFromWishlist(legoSet, authViewModel.user.value?.id.toString())
                         showToast(context, "Item removed from Wishlist!")
                     },
                     modifier = Modifier.padding(10.dp)

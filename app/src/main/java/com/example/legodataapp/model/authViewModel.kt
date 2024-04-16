@@ -3,20 +3,23 @@ package com.example.legodataapp.model
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class AuthViewModel: ViewModel() {
+    private val _user = MutableLiveData<User>()
+    val user: LiveData<User> = _user
+
     var userIsAuthenticated by mutableStateOf(false)
-    var user = User()
 
     fun login(userAccount: User) {
         userIsAuthenticated = true
-        user = userAccount
+        _user.value = userAccount
     }
 
     fun logout() {
         userIsAuthenticated = false
-        user = User()
+        _user.value = User()
     }
-
 }

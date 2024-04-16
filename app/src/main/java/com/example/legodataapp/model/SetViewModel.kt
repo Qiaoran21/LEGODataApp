@@ -18,6 +18,28 @@ class SetViewModel : ViewModel() {
     private val legoSets = MutableLiveData<AllSet>()
     val sets: LiveData<AllSet> = legoSets
 
+    //Database
+    private val firestore = FirebaseFirestore.getInstance()
+
+    private val _wishlistSets = MutableLiveData<List<LegoSet>>()
+    val wishlistSets: LiveData<List<LegoSet>> get() = _wishlistSets
+
+    private val authViewModel = AuthViewModel()
+
+    //Wishlist
+    init {
+        authViewModel.user.observeForever { user ->
+            user?.let {
+                fetchWishlistItems(user.id)
+            }
+        }
+    }
+
+    fun updateUserId(userId: String){
+        _wishlistSets.value = emptyList()
+        fetchWishlistItems(userId)
+    }
+
     fun fetchSets() {
         viewModelScope.launch {
             val setResult = repository.getSets()
@@ -25,34 +47,20 @@ class SetViewModel : ViewModel() {
         }
     }
 
-    //Database
-    private val firestore = FirebaseFirestore.getInstance()
-    val userModel = AuthViewModel()
-    var userId = userModel.user.id
-
-    //Wishlist
-    init {
-        fetchWishlistItems()
+    fun addToWishlist(legoSet: LegoSet, userId: String) {
+        //val wishlistCollection = firestore.collection("Users")
+        //    .document(userId)
+        //    .collection("Wishlist")
+        //wishlistCollection.add(legoSet)
+        val currentList = _wishlistSets.value ?: emptyList()
+        _wishlistSets.value = currentList + legoSet
     }
 
-    private val _wishlistSets = MutableLiveData<List<LegoSet>>()
-    val wishlistSets: LiveData<List<LegoSet>> get() = _wishlistSets
-
-    fun addToWishlist(legoSet: LegoSet) {
-        val wishlistCollection = firestore.collection("users")
+    fun removeFromWishlist(legoSet: LegoSet, userId: String) {
+        val wishlistCollection = firestore.collection("Users")
             .document(userId)
             .collection("Wishlist")
-        wishlistCollection.add(legoSet)
-        // val currentList = _wishlistSets.value ?: emptyList()
-        // _wishlistSets.value = currentList + legoSet
-    }
-
-    fun removeFromWishlist(legoSet: LegoSet) {
-        val wishlistCollection = firestore.collection("users")
-            .document(userId)
-            .collection("Wishlist")
-
-        wishlistCollection.whereEqualTo("Set Number", legoSet.set_num)
+        wishlistCollection.whereEqualTo("set_num", legoSet.set_num)
             .get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
@@ -65,28 +73,43 @@ class SetViewModel : ViewModel() {
             }
     }
 
-    fun fetchWishlistItems() {
-        //val wishlistCollection = firestore.collection("users")
-            //.document(userId)
-            //.collection("Wishlist")
+    fun fetchWishlistItems(userId: String) {
+        try {
+            val wishlistCollection = firestore.collection("Users")
+                .document(userId)
+                .collection("Wishlist")
 
-        // CHANGE BACK
-        val wishlistCollection = firestore.collection("Wishlist")
+            wishlistCollection.get()
+                .addOnSuccessListener { documents ->
+                    val items = mutableListOf<LegoSet>()
+                    for (document in documents) {
+                        val setName = document.getString("name") ?: ""
+                        val setImgUrl = document.getString("set_img_url") ?: ""
+                        val setNum = document.getString("set_num") ?: ""
+                        val year = document.getLong("year")?.toInt() ?: 0
+                        val last_modified_dt = document.getString("last_modified_dt") ?: ""
+                        val num_parts = document.getLong("num_parts")?.toInt() ?: 0
+                        val set_url = document.getString("set_url") ?: ""
+                        val theme_id = document.getLong("theme_id")?.toInt() ?: 0
 
-        wishlistCollection.get()
-            .addOnSuccessListener { documents ->
-                val items = mutableListOf<LegoSet>()
-                for (document in documents) {
-                    val setName = document.getString("Name") ?: ""
-                    val setImgUrl = document.getString("Set Image") ?: ""
-                    val setNum = document.getString("Set Number") ?: ""
+                        val legoSet = LegoSet(
+                            last_modified_dt = last_modified_dt,
+                            name = setName,
+                            num_parts = num_parts,
+                            set_img_url = setImgUrl,
+                            set_num = setNum,
+                            set_url = set_url,
+                            theme_id = theme_id,
+                            year = year)
 
-                    val legoSet = LegoSet(name = setName, set_img_url = setImgUrl, set_num = setNum)
-
-                    items.add(legoSet)
+                        items.add(legoSet)
+                    }
+                    _wishlistSets.value = items
                 }
-                _wishlistSets.value = items
-            }
+        }catch (e: Exception){
+
+        }
+
     }
 
     //MyLEGO

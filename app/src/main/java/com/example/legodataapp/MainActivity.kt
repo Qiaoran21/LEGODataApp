@@ -23,6 +23,12 @@ class MainActivity : ComponentActivity() {
 
         installSplashScreen()
 
+        authViewModel.user.observe(this){ user ->
+            user?.let{
+                setViewModel.updateUserId(user.id)
+            }
+        }
+
         setContent {
             val loadSettings = LoadSettings()
             val isDarkMode = loadSettings.loadDarkModeState(this@MainActivity)

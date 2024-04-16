@@ -45,6 +45,7 @@ import com.auth0.android.result.Credentials
 import com.example.legodataapp.Login
 import com.example.legodataapp.Logout
 import com.example.legodataapp.model.AuthViewModel
+import com.example.legodataapp.model.SetViewModel
 import com.example.legodataapp.model.User
 import com.example.legodataapp.ui.theme.Brown
 import com.example.legodataapp.ui.theme.Cream
@@ -57,7 +58,7 @@ import com.example.legodataapp.ui.theme.LightText
 import com.example.legodataapp.ui.theme.fontFamily
 
 @Composable
-fun AccountScreen(navController: NavController, viewModel: AuthViewModel, updateContainerColor: (Boolean) -> Unit) {
+fun AccountScreen(navController: NavController, viewModel: AuthViewModel, setViewModel: SetViewModel, updateContainerColor: (Boolean) -> Unit) {
     var buttonText: String
     var onClickAction: () -> Unit
     val context = LocalContext.current
@@ -89,7 +90,7 @@ fun AccountScreen(navController: NavController, viewModel: AuthViewModel, update
             )
             Spacer(modifier = Modifier.padding(20.dp))
             Text(
-                text = if (viewModel.userIsAuthenticated) "${viewModel.user.name} is logged in"
+                text = if (viewModel.userIsAuthenticated) "${viewModel.user.value?.name} is logged in"
                 else "Log in to use all features",
                 color = Brown,
                 fontSize = 20.sp
@@ -101,6 +102,7 @@ fun AccountScreen(navController: NavController, viewModel: AuthViewModel, update
                         viewModel.logout()
                         deleteUserState(context)
                         viewModel.userIsAuthenticated = false
+                        setViewModel.updateUserId("")
                     }, context)
                 }
                 buttonText = "Logout"
@@ -109,6 +111,7 @@ fun AccountScreen(navController: NavController, viewModel: AuthViewModel, update
                     Login(onLoginSuccess = {Credentials ->
                         viewModel.login(User(Credentials.idToken))
                         saveUserState(context, Credentials)
+                        setViewModel.updateUserId(viewModel.user.value?.id.toString())
                     }, context)
                 }
                 buttonText = "Login"

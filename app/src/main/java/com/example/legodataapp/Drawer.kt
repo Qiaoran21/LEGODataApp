@@ -31,7 +31,7 @@ fun DrawerHeader(viewModel: AuthViewModel) {
     ) {
         Text(
             text = if (viewModel.userIsAuthenticated) "Welcome back, " +
-                    "${viewModel.user.name}!"
+                    "${viewModel.user.value?.name}!"
                     else "",
             color = Brown,
             fontWeight = FontWeight.Bold,

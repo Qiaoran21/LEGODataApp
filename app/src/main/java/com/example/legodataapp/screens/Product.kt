@@ -1,6 +1,7 @@
 package com.example.legodataapp.screens
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -42,6 +43,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.legodataapp.R
 import com.example.legodataapp.data.LegoSet
+import com.example.legodataapp.model.AuthViewModel
 import com.example.legodataapp.model.User
 import com.example.legodataapp.network.RetrofitInstanceLegoTheme
 import com.example.legodataapp.ui.theme.Brown
@@ -55,6 +57,7 @@ import com.google.firebase.firestore.firestore
 @Composable
 fun ProductScreen(
     legoSet: LegoSet,
+    authViewModel: AuthViewModel,
     isAuthenticated: Boolean,
     onAddWishlist: () -> Unit,
     onAddMyLegoList: () -> Unit,
@@ -63,8 +66,9 @@ fun ProductScreen(
 ) {
     val legoDB = Firebase.firestore
     val (wishlistItems, setWishlistItems) = remember { mutableStateOf<List<LegoSet>>(emptyList()) }
-
     var themeName by rememberSaveable { mutableStateOf("") }
+
+    val user by remember { mutableStateOf(authViewModel.user.value?.id) }
 
     LaunchedEffect(Unit) {
         try {
@@ -145,12 +149,20 @@ fun ProductScreen(
                                                 "Set Number" to legoSet.set_num,
                                                 "Set Image" to legoSet.set_img_url
                                             )
-                                            legoDB.collection("Wishlist")
-                                                .add(set)
-                                                .addOnSuccessListener { documentReference ->
-                                                    onAddWishlist()
-                                                    showToast(context, "Added to Wishlist!")
-                                                }
+                                            val wishlistCollection = legoDB.collection("Users")
+                                                .document(authViewModel.user.value?.id.toString())
+                                                .collection("Wishlist")
+                                            wishlistCollection.add(legoSet).addOnSuccessListener { documentReference ->
+                                                onAddWishlist()
+                                                showToast(context, "Added to Wishlist!")
+                                            }
+                                            //
+                                            //legoDB.collection("Wishlist")
+                                               // .add(set)
+                                               // .addOnSuccessListener { documentReference ->
+                                               //     onAddWishlist()
+                                               //     showToast(context, "Added to Wishlist!")
+                                               // }
                                         },
                                         Modifier
                                             .height(55.dp)

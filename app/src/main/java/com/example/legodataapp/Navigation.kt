@@ -92,6 +92,7 @@ fun NavigationScreens(
             AccountScreen(
                 navController = navController,
                 viewModel = viewModel,
+                setViewModel = setViewModel,
                 updateContainerColor = updateContainerColor
             )
         }
@@ -119,9 +120,10 @@ fun NavigationScreens(
 
             ProductScreen(
                 legoSet = legoSet,
+                authViewModel = viewModel,
                 isAuthenticated = isAuthenticated.toBoolean(),
                 onAddWishlist = {
-                    setViewModel.addToWishlist(legoSet)
+                    setViewModel.addToWishlist(legoSet, "1")
                 },
                 onAddMyLegoList = {
                     setViewModel.addToMyLegolist(legoSet)
