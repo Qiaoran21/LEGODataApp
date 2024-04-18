@@ -39,6 +39,8 @@ import android.media.MediaPlayer
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -206,25 +208,35 @@ fun MainScreen(
                     IconButton(
                         onClick = {
                             scope.launch {
-                                if (drawerState.isOpen) {
-                                    drawerState.close() }
-                                else {
-                                    drawerState.open() }
-                            } }) {
+                                if (drawerState.isOpen)
+                                {
+                                    drawerState.close()
+                                } else {
+                                    drawerState.open()
+                                }
+                            }
+                        },
+                        modifier = Modifier.size(48.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.Rounded.Menu,
                             contentDescription = "Menu",
-                            tint = colorResource(id = textColor)
+                            tint = colorResource(id = textColor),
+                            modifier = Modifier.size(36.dp)
                         )
                     }
                 },
                 actions = {
-                    IconButton(onClick = { checkCameraPermission() })
+                    IconButton(
+                        onClick = { checkCameraPermission() },
+                        modifier = Modifier.size(48.dp)
+                    )
                     {
                         Icon(
                             painter = painterResource(id = R.drawable.qr_scan),
                             contentDescription = "QR scan",
-                            tint = colorResource(id = textColor)
+                            tint = colorResource(id = textColor),
+                            modifier = Modifier.size(36.dp)
                         )
                     }
                 }
